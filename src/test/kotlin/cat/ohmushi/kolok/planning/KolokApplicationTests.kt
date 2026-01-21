@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok
+package cat.ohmushi.kolok.planning
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

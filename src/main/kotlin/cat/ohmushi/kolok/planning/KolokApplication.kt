@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok
+package cat.ohmushi.kolok.planning
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration

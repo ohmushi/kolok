@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.domain
+package cat.ohmushi.kolok.planning.domain
 
 import java.time.LocalDate
 
