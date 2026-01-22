@@ -4,7 +4,7 @@ import cat.ohmushi.kolok.planning.domain.Assignment
 
 class ShiftByOneRotationPolicy: RotationPolicy {
     override fun apply(request: RotationRequest, draft: RotationDraft?): RotationDraft {
-        val previous = requireNotNull(request.previous)
+        val previous = requireNotNull(draft)
         require(request.responsibles.isNotEmpty())
 
         val cycle = request.responsibles
