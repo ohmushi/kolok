@@ -1,6 +1,8 @@
 package cat.ohmushi.kolok.planning.application.services
 
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
+import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
+import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.Assignment
@@ -38,7 +40,7 @@ class PlanningServiceTest {
         private val livingRoom = Responsibility("Salon")
 
         @Test
-        fun execute_shouldLoadPreviousPlanning_buildRequest_applyPolicy_buildPlanning_saveAndPublishEvents() {
+        fun execute_shouldLoadPreviousPlanning_fetchInputs_buildRequest_applyPolicy_buildPlanning_saveAndPublishEvents() {
             val previous = Planning(
                 period = periodSMinus1,
                 responsibles = listOf(fabio, theo, charles),
@@ -66,33 +68,38 @@ class PlanningServiceTest {
             )
 
             val repo = FakePlanningRepository(previous = previous)
+            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
             val publisher = CapturingEventPublisher()
 
-
-            val command = GeneratePlanningCommand(
-                period = periodS,
-                responsibles = listOf(fabio, theo, charles),
-                responsibilities = listOf(cuisine, bathroom, livingRoom)
-            )
+            val command = GeneratePlanningCommand(period = periodS)
 
             val result = PlanningService(
                 planningRepository = repo,
+                availableResponsiblesPort = availableResponsibles,
+                activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventPublisher = publisher
             ).generatePlanning(command)
 
             assertThat(repo.lastFindLatestBeforeArg).isEqualTo(periodS)
+
+            assertThat(availableResponsibles.lastPeriod).isEqualTo(periodS)
+            assertThat(activeResponsibilities.lastPeriod).isEqualTo(periodS)
+
             assertThat(policy.lastRequest).isNotNull
             assertThat(policy.lastRequest!!.period).isEqualTo(periodS)
             assertThat(policy.lastRequest!!.previous).isEqualTo(previous)
+            assertThat(policy.lastRequest!!.responsibles).containsExactly(fabio, theo, charles)
+            assertThat(policy.lastRequest!!.responsibilities).containsExactly(cuisine, bathroom, livingRoom)
 
             assertThat(factory.lastRequest).isNotNull
             assertThat(factory.lastDraft).isEqualTo(draft)
-            assertThat(repo.saved).containsExactly(expectedPlanning)
 
+            assertThat(repo.saved).containsExactly(expectedPlanning)
             assertThat(publisher.publishedEvents).isNotEmpty
             assertThat(result.planning).isEqualTo(expectedPlanning)
             assertThat(result.events).isEqualTo(publisher.publishedEvents)
@@ -116,22 +123,22 @@ class PlanningServiceTest {
             )
 
             val repo = FakePlanningRepository(previous = null)
+            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
             val publisher = CapturingEventPublisher()
 
             val useCase = PlanningService(
                 planningRepository = repo,
+                availableResponsiblesPort = availableResponsibles,
+                activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventPublisher = publisher
             )
 
-            val command = GeneratePlanningCommand(
-                period = periodS,
-                responsibles = listOf(fabio, theo, charles),
-                responsibilities = listOf(cuisine, bathroom, livingRoom)
-            )
+            val command = GeneratePlanningCommand(period = periodS)
 
             val result = useCase.generatePlanning(command)
 
@@ -159,22 +166,22 @@ class PlanningServiceTest {
             )
 
             val repo = FakePlanningRepository(previous = null)
+            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = planning)
             val publisher = CapturingEventPublisher()
 
             val useCase = PlanningService(
                 planningRepository = repo,
+                availableResponsiblesPort = availableResponsibles,
+                activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventPublisher = publisher
             )
 
-            val command = GeneratePlanningCommand(
-                period = periodS,
-                responsibles = listOf(fabio, theo, charles),
-                responsibilities = listOf(cuisine, bathroom, livingRoom)
-            )
+            val command = GeneratePlanningCommand(period = periodS)
 
             useCase.generatePlanning(command)
 
@@ -184,8 +191,13 @@ class PlanningServiceTest {
         @Test
         fun execute_shouldFail_whenRotationPolicyFails_andNotSaveOrPublish() {
             val repo = FakePlanningRepository(previous = null)
+            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
             val policy = object : RotationPolicy {
-                override fun apply(request: RotationRequest): RotationDraft {
+                override fun apply(
+                    request: RotationRequest,
+                    draft: RotationDraft?
+                ): RotationDraft {
                     throw IllegalArgumentException("rotation failed")
                 }
             }
@@ -205,16 +217,14 @@ class PlanningServiceTest {
 
             val useCase = PlanningService(
                 planningRepository = repo,
+                availableResponsiblesPort = availableResponsibles,
+                activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventPublisher = publisher
             )
 
-            val command = GeneratePlanningCommand(
-                period = periodS,
-                responsibles = listOf(fabio, theo, charles),
-                responsibilities = listOf(cuisine, bathroom, livingRoom)
-            )
+            val command = GeneratePlanningCommand(period = periodS)
 
             assertThatThrownBy { useCase.generatePlanning(command) }
                 .isInstanceOf(IllegalArgumentException::class.java)
@@ -241,13 +251,33 @@ class PlanningServiceTest {
         }
     }
 
+    private class CapturingAvailableResponsiblesPort(
+        private val result: List<Responsible>
+    ) : AvailableResponsiblesPort {
+        var lastPeriod: Period? = null
+        override fun getFor(period: Period): List<Responsible> {
+            lastPeriod = period
+            return result
+        }
+    }
+
+    private class CapturingActiveResponsibilitiesPort(
+        private val result: List<Responsibility>
+    ) : ActiveResponsibilitiesPort {
+        var lastPeriod: Period? = null
+        override fun getFor(period: Period): List<Responsibility> {
+            lastPeriod = period
+            return result
+        }
+    }
+
     private class CapturingRotationPolicy(
-        private val resultDraft: RotationDraft
+        private val resultDraft: RotationDraft,
     ) : RotationPolicy {
 
         var lastRequest: RotationRequest? = null
 
-        override fun apply(request: RotationRequest): RotationDraft {
+        override fun apply(request: RotationRequest, draft: RotationDraft?): RotationDraft {
             lastRequest = request
             return resultDraft
         }
@@ -275,5 +305,4 @@ class PlanningServiceTest {
             publishedEvents += events
         }
     }
-
 }

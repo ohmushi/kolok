@@ -1,0 +1,68 @@
+src/main/kotlin/com/coloc/planning/
+├─ domain/
+│  ├─ model/
+│  │  ├─ Period.kt
+│  │  ├─ Responsible.kt
+│  │  ├─ Responsibility.kt
+│  │  ├─ Assignment.kt
+│  │  └─ Planning.kt
+│  ├─ rotation/
+│  │  ├─ RotationRequest.kt
+│  │  ├─ RotationDraft.kt
+│  │  ├─ RotationPolicy.kt
+│  │  ├─ CompositeRotationPolicy.kt
+│  │  ├─ ValidateInputsPolicy.kt
+│  │  ├─ BootstrapIfNoPreviousPolicy.kt
+│  │  ├─ ProjectPreviousAssignmentsPolicy.kt
+│  │  ├─ ShiftByOnePolicy.kt
+│  │  ├─ CoverAllResponsibilitiesPolicy.kt
+│  │  ├─ BalanceLoadPolicy.kt
+│  │  └─ FairnessGuardPolicy.kt
+│  ├─ factory/
+│  │  ├─ PlanningFactory.kt
+│  │  └─ DefaultPlanningFactory.kt
+│  ├─ events/
+│  │  ├─ DomainEvent.kt
+│  │  ├─ PlanningGenerated.kt
+│  │  ├─ ResponsibilitiesChanged.kt
+│  │  └─ RotationFailed.kt
+│  └─ errors/
+│     ├─ DomainException.kt
+│     ├─ InvalidPlanningException.kt
+│     └─ InvalidRotationRequestException.kt
+│
+├─ application/
+│  ├─ ports/
+│  │  ├─ `in`/
+│  │  │  ├─ GeneratePlanningUseCase.kt
+│  │  │  ├─ GeneratePlanningCommand.kt
+│  │  │  └─ GeneratePlanningResult.kt
+│  │  └─ out/
+│  │     ├─ PlanningRepository.kt
+│  │     └─ EventPublisher.kt
+│  ├─ service/
+│  │  └─ GeneratePlanningService.kt
+│  └─ mapper/
+│     └─ PlanningViewMapper.kt
+│
+├─ adapters/
+│  ├─ in/
+│  │  └─ discord/
+│  │     ├─ DiscordBot.kt
+│  │     ├─ DiscordCommandRouter.kt
+│  │     ├─ GeneratePlanningHandler.kt
+│  │     └─ view/
+│  │        ├─ PlanningMessageRenderer.kt
+│  │        └─ TextTableRenderer.kt
+│  └─ out/
+│     ├─ persistence/
+│     │  ├─ InMemoryPlanningRepository.kt
+│     │  ├─ FilePlanningRepository.kt
+│     │  └─ SqlPlanningRepository.kt
+│     └─ events/
+│        ├─ NoopEventPublisher.kt
+│        └─ DiscordEventPublisher.kt
+│
+└─ bootstrap/
+   ├─ Main.kt
+   └─ Wiring.kt

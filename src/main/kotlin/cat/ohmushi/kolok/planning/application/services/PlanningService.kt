@@ -1,8 +1,11 @@
 package cat.ohmushi.kolok.planning.application.services
 
+import cat.ohmushi.kolok.planning.application.annotations.ApplicationComponent
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningResult
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningUseCase
+import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
+import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.PlanningFactory
@@ -10,11 +13,14 @@ import cat.ohmushi.kolok.planning.domain.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.RotationRequest
 
+@ApplicationComponent
 data class PlanningService (
     val planningRepository: PlanningRepository,
     val rotationPolicy: RotationPolicy,
     val planningFactory: PlanningFactory,
     val eventPublisher: EventPublisher,
+    val availableResponsiblesPort: AvailableResponsiblesPort,
+    val activeResponsibilitiesPort: ActiveResponsibilitiesPort,
 )
     : GeneratePlanningUseCase
 {
@@ -23,8 +29,8 @@ data class PlanningService (
 
         val request = RotationRequest(
             period = command.period,
-            responsibles = command.responsibles,
-            responsibilities = command.responsibilities,
+            responsibles = availableResponsiblesPort.getFor(command.period),
+            responsibilities = activeResponsibilitiesPort.getFor(command.period),
             previous = previous
         )
 

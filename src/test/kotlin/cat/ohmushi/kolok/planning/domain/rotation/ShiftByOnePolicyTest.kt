@@ -1,11 +1,13 @@
-package cat.ohmushi.kolok.planning.domain
+package cat.ohmushi.kolok.planning.domain.rotation
 
-import cat.ohmushi.kolok.planning.domain.rotation.RotationRequest
-import cat.ohmushi.kolok.planning.domain.rotation.ShiftByOneRotationPolicy
-import org.assertj.core.api.Assertions.*
+import cat.ohmushi.kolok.planning.domain.Assignment
+import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.Planning
+import cat.ohmushi.kolok.planning.domain.Responsibility
+import cat.ohmushi.kolok.planning.domain.Responsible
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import kotlin.collections.emptyList
 
 class ShiftByOnePolicyTest {
 
@@ -43,7 +45,7 @@ class ShiftByOnePolicyTest {
 
         val draft = ShiftByOneRotationPolicy().apply(request)
 
-        assertThat(draft.assignments).containsExactlyInAnyOrder(
+        Assertions.assertThat(draft.assignments).containsExactlyInAnyOrder(
             Assignment(theo, cuisine),
             Assignment(charles, bathroom),
             Assignment(fabio, livingRoom)
@@ -74,7 +76,7 @@ class ShiftByOnePolicyTest {
 
         val draft = ShiftByOneRotationPolicy().apply(request)
 
-        assertThat(draft.assignments).containsExactlyInAnyOrder(
+        Assertions.assertThat(draft.assignments).containsExactlyInAnyOrder(
             Assignment(charles, bathroom),
             Assignment(fabio, livingRoom),
             Assignment(theo, cuisine),
@@ -106,7 +108,7 @@ class ShiftByOnePolicyTest {
         val d1 = ShiftByOneRotationPolicy().apply(request)
         val d2 = ShiftByOneRotationPolicy().apply(request)
 
-        assertThat(d1).isEqualTo(d2)
+        Assertions.assertThat(d1).isEqualTo(d2)
     }
 
     @Test
@@ -119,7 +121,7 @@ class ShiftByOnePolicyTest {
         )
 
 
-        assertThatThrownBy { ShiftByOneRotationPolicy().apply(request) }
+        Assertions.assertThatThrownBy { ShiftByOneRotationPolicy().apply(request) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -141,7 +143,8 @@ class ShiftByOnePolicyTest {
 
         val policy = ShiftByOneRotationPolicy()
 
-        assertThatThrownBy { policy.apply(request) }
+        Assertions.assertThatThrownBy { policy.apply(request) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
+
 }
