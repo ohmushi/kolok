@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.domain.rotation
 
-import cat.ohmushi.kolok.planning.domain.Assignment
-import cat.ohmushi.kolok.planning.domain.Planning
+import cat.ohmushi.kolok.planning.domain.planning.Assignment
+import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.Responsibility
 import cat.ohmushi.kolok.planning.domain.Responsible
 

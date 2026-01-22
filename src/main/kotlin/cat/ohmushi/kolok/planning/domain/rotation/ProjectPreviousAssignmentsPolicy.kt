@@ -3,7 +3,7 @@ package cat.ohmushi.kolok.planning.domain.rotation
 class ProjectPreviousAssignmentsPolicy : RotationPolicy {
 
     override fun apply(request: RotationRequest, draft: RotationDraft?): RotationDraft {
-        if (draft != null) return draft
+        if (draft != null && draft.assignments.isNotEmpty()) return draft
 
         val previous = request.previous ?: return RotationDraft(assignments = emptyList())
 

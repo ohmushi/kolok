@@ -1,7 +1,8 @@
 package cat.ohmushi.kolok.planning.domain.rotation
 
-import cat.ohmushi.kolok.planning.domain.Assignment
+import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.Responsibility
 import cat.ohmushi.kolok.planning.domain.Responsible
 import org.assertj.core.api.Assertions.*
@@ -113,7 +114,7 @@ class BootstrapIfNoPreviousPolicyTest {
 
     @Test
     fun apply_shouldReturnEmptyDraft_whenPreviousExists_andDraftIsNull() {
-        val previous = cat.ohmushi.kolok.planning.domain.Planning(
+        val previous = Planning(
             period = Period(LocalDate.of(2026, 1, 5)),
             responsibles = listOf(fabio, theo),
             responsibilities = listOf(cuisine),

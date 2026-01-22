@@ -1,8 +1,8 @@
 package cat.ohmushi.kolok.planning.domain.rotation
 
-import cat.ohmushi.kolok.planning.domain.Assignment
+import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Planning
+import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.Responsibility
 import cat.ohmushi.kolok.planning.domain.Responsible
 import org.assertj.core.api.Assertions
@@ -112,7 +112,7 @@ class ShiftByOnePolicyTest {
     }
 
     @Test
-    fun apply_shouldFail_whenNoPreviousPlanning() {
+    fun apply_shouldReturnEmptyDraft_whenNoPreviousAndNoDraft() {
         val request = RotationRequest(
             period = period,
             responsibles = listOf(fabio, theo, charles),
@@ -120,9 +120,9 @@ class ShiftByOnePolicyTest {
             previous = null
         )
 
+        val result = ShiftByOneRotationPolicy().apply(request, null)
 
-        Assertions.assertThatThrownBy { ShiftByOneRotationPolicy().apply(request) }
-            .isInstanceOf(IllegalArgumentException::class.java)
+        Assertions.assertThat(result.assignments).isEmpty()
     }
 
     @Test

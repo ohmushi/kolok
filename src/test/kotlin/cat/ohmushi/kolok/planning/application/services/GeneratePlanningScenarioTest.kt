@@ -6,12 +6,12 @@ import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPo
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.bootstrap.Wiring
-import cat.ohmushi.kolok.planning.domain.Assignment
-import cat.ohmushi.kolok.planning.domain.DefaultPlanningFactory
-import cat.ohmushi.kolok.planning.domain.DomainEvent
+import cat.ohmushi.kolok.planning.domain.planning.Assignment
+import cat.ohmushi.kolok.planning.domain.planning.DefaultPlanningFactory
+import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Planning
-import cat.ohmushi.kolok.planning.domain.PlanningGenerated
+import cat.ohmushi.kolok.planning.domain.planning.Planning
+import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.Responsibility
 import cat.ohmushi.kolok.planning.domain.Responsible
 import cat.ohmushi.kolok.planning.domain.rotation.*
@@ -61,9 +61,9 @@ class GeneratePlanningScenarioTest {
             responsibles = listOf(fabio, theo, charles),
             responsibilities = listOf(cuisine, bathroom, livingRoom),
             assignments = listOf(
-                Assignment(fabio, cuisine),
                 Assignment(theo, bathroom),
-                Assignment(charles, livingRoom)
+                Assignment(charles, livingRoom),
+                Assignment(fabio, cuisine),
             )
         )
         repo.save(initial)
@@ -72,14 +72,14 @@ class GeneratePlanningScenarioTest {
         assertThat(r1.assignments).containsExactlyInAnyOrder(
             Assignment(theo, cuisine),
             Assignment(charles, bathroom),
-            Assignment(fabio, livingRoom)
+            Assignment(fabio, livingRoom),
         )
 
         val r2 = service.generatePlanning(GeneratePlanningCommand(period = p2)).planning
         assertThat(r2.assignments).containsExactlyInAnyOrder(
+            Assignment(theo, livingRoom),
             Assignment(charles, cuisine),
             Assignment(fabio, bathroom),
-            Assignment(theo, livingRoom)
         )
 
         val generatedPeriods = publisher.publishedEvents
@@ -189,7 +189,7 @@ class GeneratePlanningScenarioTest {
         val s2 = service.generatePlanning(GeneratePlanningCommand(period = p2)).planning
         assertThat(s2.assignments.map { it.responsible }.toSet()).doesNotContain(theo)
         assertThat(s2.assignments).containsExactlyInAnyOrder(
-            Assignment(fabio, livingRoom),
+            Assignment(fabio, livingRoom,),
             Assignment(fabio, cuisine),
             Assignment(charles, bathroom)
         )

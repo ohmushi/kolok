@@ -1,27 +1,9 @@
-package cat.ohmushi.kolok.planning.domain
+package cat.ohmushi.kolok.planning.domain.planning
 
-import java.time.DayOfWeek
-import java.time.LocalDate
-
-data class Responsible(val name: String)
-
-data class Responsibility(val name: String)
-
-data class Period(val start: LocalDate) {
-    init {
-        require(start.dayOfWeek == DayOfWeek.MONDAY)
-    }
-    fun next(): Period {
-        return Period(start.plusWeeks(1))
-    }
-}
-
-data class Assignment(val responsible: Responsible, val responsibility: Responsibility) {
-    override fun toString(): String {
-        return "${responsible.name} → ${responsibility.name}"
-    }
-}
-
+import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.Responsibility
+import cat.ohmushi.kolok.planning.domain.Responsible
+import kotlin.collections.plus
 
 class Planning(
     val period: Period,
@@ -102,7 +84,3 @@ class Planning(
         )
     }
 }
-
-
-
-

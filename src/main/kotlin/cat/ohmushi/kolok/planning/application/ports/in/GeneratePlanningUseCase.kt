@@ -1,8 +1,8 @@
 package cat.ohmushi.kolok.planning.application.ports.`in`
 
-import cat.ohmushi.kolok.planning.domain.DomainEvent
+import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Planning
+import cat.ohmushi.kolok.planning.domain.planning.Planning
 
 data class GeneratePlanningCommand(
     val period: Period,

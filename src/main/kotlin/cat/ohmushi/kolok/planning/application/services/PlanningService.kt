@@ -8,8 +8,8 @@ import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPo
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
-import cat.ohmushi.kolok.planning.domain.PlanningFactory
-import cat.ohmushi.kolok.planning.domain.PlanningGenerated
+import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
+import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.RotationRequest
 

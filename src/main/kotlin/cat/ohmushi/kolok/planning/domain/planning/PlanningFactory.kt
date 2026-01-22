@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.domain
+package cat.ohmushi.kolok.planning.domain.planning
 
 import cat.ohmushi.kolok.planning.application.annotations.ApplicationComponent
 import cat.ohmushi.kolok.planning.domain.rotation.RotationDraft

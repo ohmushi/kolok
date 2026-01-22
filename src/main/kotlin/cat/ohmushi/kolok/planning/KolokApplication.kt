@@ -8,8 +8,8 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.application.services.PlanningService
 import cat.ohmushi.kolok.planning.bootstrap.Wiring
-import cat.ohmushi.kolok.planning.domain.DefaultPlanningFactory
-import cat.ohmushi.kolok.planning.domain.DomainEvent
+import cat.ohmushi.kolok.planning.domain.planning.DefaultPlanningFactory
+import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
 import org.springframework.boot.autoconfigure.SpringBootApplication

@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.adapters.out.events
 
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
-import cat.ohmushi.kolok.planning.domain.DomainEvent
+import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 
 class DiscordEventPublisher: EventPublisher {
     override fun publish(events: List<DomainEvent>) {

@@ -1,6 +1,6 @@
 package cat.ohmushi.kolok.planning.domain.rotation
 
-import cat.ohmushi.kolok.planning.domain.Assignment
+import cat.ohmushi.kolok.planning.domain.planning.Assignment
 
 class BootstrapIfNoPreviousPolicy : RotationPolicy {
 

@@ -7,7 +7,9 @@ class CompositeRotationPolicy(
     override fun apply(request: RotationRequest, draft: RotationDraft?): RotationDraft {
         require(policies.isNotEmpty())
         var current = draft
-        for (p in policies) current = p.apply(request, current)
+        for (p in policies) {
+            current = p.apply(request, current)
+        }
         return requireNotNull(current)
     }
 }
