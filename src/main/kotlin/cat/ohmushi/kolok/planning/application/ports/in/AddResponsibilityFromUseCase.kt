@@ -1,0 +1,13 @@
+package cat.ohmushi.kolok.planning.application.ports.`in`
+
+import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.Responsibility
+
+interface AddResponsibilityFromUseCase {
+    fun addResponsibility(command: AddResponsibilityFromCommand)
+}
+
+data class AddResponsibilityFromCommand(
+    val responsibility: Responsibility,
+    val from: Period
+)

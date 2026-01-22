@@ -1,5 +1,6 @@
-package cat.ohmushi.kolok.planning.adapters.out.persistence.json
+package cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities
 
+import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FileCatalog
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Responsibility

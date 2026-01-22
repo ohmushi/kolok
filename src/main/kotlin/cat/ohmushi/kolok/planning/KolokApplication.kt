@@ -1,16 +1,18 @@
 package cat.ohmushi.kolok.planning
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FileActiveResponsibilitiesPort
-import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FileAvailableResponsiblesPort
-import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FilePlanningRepository
+import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.AvailabilityCalendarAvailableResponsiblesPort
+import cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities.FileActiveResponsibilitiesPort
+import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.FilePlanningRepository
 import cat.ohmushi.kolok.planning.application.annotations.ApplicationComponent
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
+import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
 import cat.ohmushi.kolok.planning.application.services.PlanningService
 import cat.ohmushi.kolok.planning.bootstrap.Wiring
 import cat.ohmushi.kolok.planning.domain.planning.DefaultPlanningFactory
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.Responsible
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
@@ -40,7 +42,15 @@ fun main(args: Array<String>) {
             println(events)
         }
     }
-    val availableResponsiblesPort = FileAvailableResponsiblesPort(catalog = wiring.fileCatalog(mapper))
+
+    val fileCatalog = wiring.fileCatalog(mapper)
+    val roster = object : RosterProvider {
+        override fun roster(): Set<Responsible> {
+            return setOf(Responsible("theo"), Responsible("fabio"), Responsible("charles"))
+        }
+
+    }
+    val availableResponsiblesPort = AvailabilityCalendarAvailableResponsiblesPort(repository = wiring.availabilityCalendarRepository(fileCatalog, roster))
     val activeResponsibilitiesPort = FileActiveResponsibilitiesPort(catalog = wiring.fileCatalog(mapper))
     
     val generatePlanningUseCase = PlanningService(

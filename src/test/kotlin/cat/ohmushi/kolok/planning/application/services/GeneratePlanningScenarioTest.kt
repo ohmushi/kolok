@@ -1,6 +1,6 @@
 package cat.ohmushi.kolok.planning.application.services
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.inmemory.InMemoryPlanningRepository
+import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.inmemory.InMemoryPlanningRepository
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort

@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.adapters.out.persistence.inmemory
+package cat.ohmushi.kolok.planning.adapters.out.persistence.planning.inmemory
 
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.Period

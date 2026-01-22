@@ -1,12 +1,15 @@
 package cat.ohmushi.kolok.planning.bootstrap
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FileActiveResponsibilitiesPort
-import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FileAvailableResponsiblesPort
+import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.AvailabilityCalendarAvailableResponsiblesPort
+import cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities.FileActiveResponsibilitiesPort
+import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.FileAvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FileCatalog
-import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FilePlanningRepository
+import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.FilePlanningRepository
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
+import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
+import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
 import cat.ohmushi.kolok.planning.domain.rotation.BalanceLoadPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.BootstrapIfNoPreviousPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.CompositeRotationPolicy
@@ -59,8 +62,18 @@ class Wiring {
     @Bean
     fun activeResponsibilitiesPort(catalog: FileCatalog): ActiveResponsibilitiesPort = FileActiveResponsibilitiesPort(catalog)
 
+
     @Bean
-    fun availableResponsiblesPort(catalog: FileCatalog): AvailableResponsiblesPort = FileAvailableResponsiblesPort(catalog)
+    fun availabilityCalendarRepository(catalog: FileCatalog, rosterProvider: RosterProvider): AvailabilityCalendarRepository = FileAvailabilityCalendarRepository(
+        catalog = catalog,
+        rosterProvider = rosterProvider
+    )
+
+    @Bean
+    fun availableResponsiblesPort(availabilityCalendarRepository: AvailabilityCalendarRepository): AvailableResponsiblesPort =
+        AvailabilityCalendarAvailableResponsiblesPort(
+            repository = availabilityCalendarRepository,
+        )
 
     @Bean
     fun planningRepository(mapper: ObjectMapper): PlanningRepository = FilePlanningRepository(
