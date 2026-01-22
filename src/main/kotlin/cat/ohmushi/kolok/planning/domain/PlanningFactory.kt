@@ -14,7 +14,12 @@ class DefaultPlanningFactory: PlanningFactory {
         request: RotationRequest,
         draft: RotationDraft
     ): Planning {
-        TODO("Not yet implemented")
+        return Planning(
+            period = request.period,
+            responsibles = request.responsibles,
+            responsibilities = request.responsibilities,
+            assignments = draft.assignments
+        )
     }
 
 }

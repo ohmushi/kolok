@@ -20,4 +20,8 @@ class InMemoryPlanningRepository: PlanningRepository {
         store.removeIf { it.period == planning.period }
         store += planning
     }
+
+    fun reset() {
+        store.clear()
+    }
 }

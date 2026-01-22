@@ -16,7 +16,11 @@ data class Period(val start: LocalDate) {
     }
 }
 
-data class Assignment(val responsible: Responsible, val responsibility: Responsibility)
+data class Assignment(val responsible: Responsible, val responsibility: Responsibility) {
+    override fun toString(): String {
+        return "${responsible.name} → ${responsibility.name}"
+    }
+}
 
 
 class Planning(
