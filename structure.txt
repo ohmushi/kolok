@@ -33,7 +33,7 @@ src/main/kotlin/com/coloc/planning/
 │
 ├─ application/
 │  ├─ ports/
-│  │  ├─ `in`/
+│  │  ├─ in/
 │  │  │  ├─ GeneratePlanningUseCase.kt
 │  │  │  ├─ GeneratePlanningCommand.kt
 │  │  │  └─ GeneratePlanningResult.kt

@@ -1,0 +1,32 @@
+[ {
+  "periodStart" : "2026-01-05",
+  "responsibles" : [ "Fabio", "Theo", "Charles" ],
+  "responsibilities" : [ "Cuisine", "Salle de bain", "Salon" ],
+  "assignments" : [ {
+    "responsible" : "Theo",
+    "responsibility" : "Cuisine"
+  }, {
+    "responsible" : "Charles",
+    "responsibility" : "Salle de bain"
+  }, {
+    "responsible" : "Fabio",
+    "responsibility" : "Salon"
+  } ]
+}, {
+  "periodStart" : "2026-01-12",
+  "responsibles" : [ "Fabio", "Charles" ],
+  "responsibilities" : [ "Cuisine", "Salle de bain", "Salon", "Toilettes" ],
+  "assignments" : [ {
+    "responsible" : "Fabio",
+    "responsibility" : "Salle de bain"
+  }, {
+    "responsible" : "Charles",
+    "responsibility" : "Salon"
+  }, {
+    "responsible" : "Charles",
+    "responsibility" : "Cuisine"
+  }, {
+    "responsible" : "Fabio",
+    "responsibility" : "Toilettes"
+  } ]
+} ]
