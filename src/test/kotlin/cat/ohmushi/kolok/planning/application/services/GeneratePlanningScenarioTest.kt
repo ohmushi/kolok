@@ -5,14 +5,12 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
-import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.bootstrap.Wiring
 import cat.ohmushi.kolok.planning.domain.Assignment
 import cat.ohmushi.kolok.planning.domain.DefaultPlanningFactory
 import cat.ohmushi.kolok.planning.domain.DomainEvent
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Planning
-import cat.ohmushi.kolok.planning.domain.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.Responsibility
 import cat.ohmushi.kolok.planning.domain.Responsible

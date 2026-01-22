@@ -12,7 +12,7 @@ data class Period(val start: LocalDate) {
         require(start.dayOfWeek == DayOfWeek.MONDAY)
     }
     fun next(): Period {
-        return Period(start.plusWeeks(1));
+        return Period(start.plusWeeks(1))
     }
 }
 

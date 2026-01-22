@@ -1,7 +1,5 @@
 package cat.ohmushi.kolok.planning.bootstrap
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.inmemory.InMemoryPlanningRepository
-import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.rotation.BalanceLoadPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.BootstrapIfNoPreviousPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.CompositeRotationPolicy
