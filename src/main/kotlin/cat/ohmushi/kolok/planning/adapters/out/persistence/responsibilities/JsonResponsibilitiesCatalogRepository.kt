@@ -1,0 +1,50 @@
+package cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities
+
+import cat.ohmushi.kolok.planning.adapters.out.persistence.JsonPersistence
+import cat.ohmushi.kolok.planning.adapters.out.persistence.ResponsibilitiesVersionFileEntry
+import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
+import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.Responsibility
+import cat.ohmushi.kolok.planning.domain.responsibilities.ResponsibilitiesCatalog
+import org.springframework.stereotype.Repository
+import java.time.LocalDate
+
+@Repository
+class JsonResponsibilitiesCatalogRepository(
+    private val jsonPersistence: JsonPersistence
+) : ResponsibilitiesCatalogRepository {
+
+    override fun get(): ResponsibilitiesCatalog? {
+        val file = jsonPersistence.read()
+        if (file.responsibilityVersions.isEmpty()) return null
+
+        val versions = file.responsibilityVersions
+            .map {
+                Period(LocalDate.parse(it.from)) to it.responsibilities.map(::Responsibility).toSet()
+            }
+            .sortedBy { it.first.start }
+
+        val (firstFrom, firstSet) = versions.first()
+        var responsabilities = ResponsibilitiesCatalog.create(firstFrom, firstSet)
+
+        for ((from, set) in versions.drop(1)) {
+            responsabilities = responsabilities.defineFor(from, set)
+        }
+
+        val (clean, _) = responsabilities.consumeEvents()
+        return clean
+    }
+
+    override fun save(catalogAgg: ResponsibilitiesCatalog) {
+        val file = jsonPersistence.read()
+
+        val versions = catalogAgg.snapshotVersions().map { v ->
+            ResponsibilitiesVersionFileEntry(
+                from = v.from.start.toString(),
+                responsibilities = v.responsibilities.map { it.name }.sorted()
+            )
+        }.sortedBy { LocalDate.parse(it.from) }
+
+        jsonPersistence.write(file.copy(responsibilityVersions = versions))
+    }
+}

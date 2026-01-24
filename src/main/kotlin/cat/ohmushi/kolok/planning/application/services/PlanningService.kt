@@ -12,8 +12,9 @@ import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.RotationRequest
+import org.springframework.stereotype.Service
 
-@ApplicationComponent
+@Service
 data class PlanningService (
     val planningRepository: PlanningRepository,
     val rotationPolicy: RotationPolicy,

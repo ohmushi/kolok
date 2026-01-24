@@ -3,6 +3,7 @@ package cat.ohmushi.kolok.planning.domain.responsibilities
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Responsibility
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
+import cat.ohmushi.kolok.planning.domain.events.ResponsibilitiesDefined
 import cat.ohmushi.kolok.planning.domain.events.ResponsibilityAddedFrom
 import cat.ohmushi.kolok.planning.domain.events.ResponsibilityRemovedFrom
 
@@ -55,8 +56,11 @@ class ResponsibilitiesCatalog private constructor(
         return ResponsibilitiesCatalog(nextVersions, pendingEvents + event)
     }
 
-    fun pullEvents(): List<DomainEvent> =
-        pendingEvents
+    fun consumeEvents(): Pair<ResponsibilitiesCatalog, List<DomainEvent>> =
+        ResponsibilitiesCatalog(
+            versions = versions,
+            pendingEvents = emptyList()
+        ) to pendingEvents
 
     fun snapshotVersions(): List<ResponsibilitiesVersion> =
         versions.toList()
@@ -68,5 +72,19 @@ class ResponsibilitiesCatalog private constructor(
         val next = (kept + v).sortedBy { it.from.start }
 
         return next
+    }
+
+    fun defineFor(from: Period, responsibilities: Set<Responsibility>): ResponsibilitiesCatalog {
+        val version = ResponsibilitiesVersion(from = from, responsibilities = responsibilities)
+
+        val kept = versions.filterNot { it.from == from }
+        val nextVersions = (kept + version).sortedBy { it.from.start }
+
+        val event = ResponsibilitiesDefined(from = from, responsibilities = responsibilities)
+
+        return ResponsibilitiesCatalog(
+            versions = nextVersions,
+            pendingEvents = pendingEvents + event
+        )
     }
 }

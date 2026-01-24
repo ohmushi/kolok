@@ -1,11 +1,15 @@
 {
-  "responsiblesByPeriod": {
-    "2026-01-05": ["Fabio", "Theo", "Charles"],
-    "2026-01-12": ["Fabio", "Charles"],
-    "2026-01-26": ["Fabio", "Theo", "Charles"]
-  },
-  "responsibilitiesByPeriod": {
-    "2026-01-05": ["Cuisine", "Salle de bain", "Salon"],
-    "2026-01-12": ["Cuisine", "Salle de bain", "Salon", "Toilettes"]
-  }
+  "absences": [
+    { "responsible": "Theo", "from": "2026-01-12", "to": "2026-01-19" }
+  ],
+  "responsibilityVersions": [
+    {
+      "from": "2026-01-05",
+      "responsibilities": ["Cuisine", "Salle de bain", "Salon"]
+    },
+    {
+      "from": "2026-01-12",
+      "responsibilities": ["Cuisine", "Salle de bain", "Salon", "Toilettes"]
+    }
+  ]
 }

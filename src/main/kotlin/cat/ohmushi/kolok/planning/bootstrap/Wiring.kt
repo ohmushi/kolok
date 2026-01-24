@@ -1,15 +1,22 @@
 package cat.ohmushi.kolok.planning.bootstrap
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.AvailabilityCalendarAvailableResponsiblesPort
-import cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities.FileActiveResponsibilitiesPort
-import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.FileAvailabilityCalendarRepository
-import cat.ohmushi.kolok.planning.adapters.out.persistence.json.FileCatalog
+import cat.ohmushi.kolok.planning.adapters.out.events.DiscordEventPublisher
+import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.AvailableResponsiblesAdapter
+import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.FixedRosterProvider
+import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.JsonAvailabilityCalendarRepository
+import cat.ohmushi.kolok.planning.adapters.out.persistence.JsonPersistence
 import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.FilePlanningRepository
+import cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities.ActiveResponsibilitiesAdapter
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
+import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
+import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
 import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
+import cat.ohmushi.kolok.planning.domain.events.DomainEvent
+import cat.ohmushi.kolok.planning.domain.planning.DefaultPlanningFactory
+import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.rotation.BalanceLoadPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.BootstrapIfNoPreviousPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.CompositeRotationPolicy
@@ -51,33 +58,40 @@ class Wiring {
     }
 
     @Bean
-    fun fileCatalog(mapper: ObjectMapper): FileCatalog {
+    fun fileCatalog(mapper: ObjectMapper): JsonPersistence {
 
-        return FileCatalog(
+        return JsonPersistence(
             path = catalogPath,
             mapper = mapper,
         )
     }
 
     @Bean
-    fun activeResponsibilitiesPort(catalog: FileCatalog): ActiveResponsibilitiesPort = FileActiveResponsibilitiesPort(catalog)
-
-
-    @Bean
-    fun availabilityCalendarRepository(catalog: FileCatalog, rosterProvider: RosterProvider): AvailabilityCalendarRepository = FileAvailabilityCalendarRepository(
-        catalog = catalog,
-        rosterProvider = rosterProvider
-    )
-
-    @Bean
-    fun availableResponsiblesPort(availabilityCalendarRepository: AvailabilityCalendarRepository): AvailableResponsiblesPort =
-        AvailabilityCalendarAvailableResponsiblesPort(
-            repository = availabilityCalendarRepository,
+    fun activeResponsibilitiesPort(responsabilityCatalogRepository: ResponsibilitiesCatalogRepository): ActiveResponsibilitiesPort =
+        ActiveResponsibilitiesAdapter(
+            repository = responsabilityCatalogRepository
         )
+
+    @Bean
+    fun availableResponsiblesPort(availabilityCalendarRepository: AvailabilityCalendarRepository, rosterProvider: FixedRosterProvider): AvailableResponsiblesPort =
+        AvailableResponsiblesAdapter(
+            repository = availabilityCalendarRepository,
+            rosterProvider = rosterProvider,
+        )
+
+    @Bean
+    fun rosterProvider(): RosterProvider = FixedRosterProvider()
 
     @Bean
     fun planningRepository(mapper: ObjectMapper): PlanningRepository = FilePlanningRepository(
         path = planningsPath,
         mapper = mapper
     )
+
+    @Bean
+    fun eventPublisher(): EventPublisher = object : EventPublisher {
+        override fun publish(events: List<DomainEvent>) {
+            // DO nothing
+        }
+    }
 }

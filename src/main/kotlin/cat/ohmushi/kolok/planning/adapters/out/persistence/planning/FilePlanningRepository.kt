@@ -1,7 +1,5 @@
 package cat.ohmushi.kolok.planning.adapters.out.persistence.planning
 
-import AssignmentFileEntry
-import PlanningFileEntry
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Responsibility
@@ -13,6 +11,19 @@ import tools.jackson.module.kotlin.readValue
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
+
+data class PlanningFileEntry(
+    val periodStart: String,
+    val responsibles: List<String>,
+    val responsibilities: List<String>,
+    val assignments: List<AssignmentFileEntry>
+)
+
+data class AssignmentFileEntry(
+    val responsible: String,
+    val responsibility: String
+)
+
 
 class FilePlanningRepository(
     private val path: Path,
