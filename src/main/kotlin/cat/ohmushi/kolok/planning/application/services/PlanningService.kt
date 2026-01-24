@@ -1,6 +1,6 @@
 package cat.ohmushi.kolok.planning.application.services
 
-import cat.ohmushi.kolok.planning.application.annotations.ApplicationComponent
+import cat.ohmushi.kolok.planning.application.annotations.ApplicationService
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningResult
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningUseCase
@@ -12,9 +12,8 @@ import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.RotationRequest
-import org.springframework.stereotype.Service
 
-@Service
+@ApplicationService
 data class PlanningService (
     val planningRepository: PlanningRepository,
     val rotationPolicy: RotationPolicy,

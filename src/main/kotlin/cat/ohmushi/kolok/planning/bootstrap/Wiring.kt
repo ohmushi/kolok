@@ -1,9 +1,7 @@
 package cat.ohmushi.kolok.planning.bootstrap
 
-import cat.ohmushi.kolok.planning.adapters.out.events.DiscordEventPublisher
 import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.AvailableResponsiblesAdapter
 import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.FixedRosterProvider
-import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.JsonAvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.adapters.out.persistence.JsonPersistence
 import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.FilePlanningRepository
 import cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities.ActiveResponsibilitiesAdapter
@@ -15,8 +13,6 @@ import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
 import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
-import cat.ohmushi.kolok.planning.domain.planning.DefaultPlanningFactory
-import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.rotation.BalanceLoadPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.BootstrapIfNoPreviousPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.CompositeRotationPolicy
