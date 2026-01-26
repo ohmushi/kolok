@@ -1,5 +1,6 @@
 package cat.ohmushi.kolok.planning.adapters.out.events
 
+import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordUser
 import cat.ohmushi.kolok.planning.domain.Responsible
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import org.springframework.stereotype.Component
@@ -12,10 +13,10 @@ class PlanningMessageFormatter {
     private val dateFormatter =
         DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH)
 
-    fun formatCompact(planning: Planning, absents: List<Responsible>): String {
+    fun formatCompact(planning: Planning, absents: List<Responsible>, discordUsers: List<DiscordUser>): String {
         val sb = StringBuilder()
 
-        sb.appendLine("🧹 **Planning ménage — semaine du ${planning.period.start.format(dateFormatter)}**")
+        sb.appendLine("🧹 **Planning ménage - semaine du ${planning.period.start.format(dateFormatter)}**")
         sb.appendLine()
 
         val grouped = planning.assignments
@@ -25,9 +26,11 @@ class PlanningMessageFormatter {
         val maxNameLength = grouped.keys.maxOfOrNull { it.name.length } ?: 0
 
         grouped.forEach { (responsible, assignments) ->
-            val paddedName = responsible.name.padEnd(maxNameLength)
+            val snowflake = discordUsers.find { it.responsible == responsible.name }?.snowflake
+            val mention = if (snowflake != null) "<@$snowflake>" else "?"
+            val paddedMention = mention.padEnd(maxNameLength)
             val tasks = assignments.joinToString(", ") { it.responsibility.name }
-            sb.appendLine("$paddedName → $tasks")
+            sb.appendLine("$paddedMention → $tasks")
         }
 
         if (absents.isNotEmpty()) {

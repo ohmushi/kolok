@@ -11,5 +11,10 @@
       "from": "2026-01-12",
       "responsibilities": ["Cuisine", "Salle de bain", "Salon", "Toilettes"]
     }
+  ],
+  "discordUsers": [
+    { "responsible":  "Theo", "snowflake": "288729200175611905"},
+    { "responsible":  "Charles", "snowflake": "313316596422803456"},
+    { "responsible":  "Fabio", "snowflake": "689121606760792075"}
   ]
 }

@@ -2,6 +2,7 @@ package cat.ohmushi.kolok.planning.adapters.out.events
 
 import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
+import cat.ohmushi.kolok.planning.application.ports.out.DiscordIdentityLinkRepository
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
@@ -22,6 +23,7 @@ class DiscordEventsPublisher(
     val plannings: PlanningRepository,
     val availabilities: AvailabilityCalendarRepository,
     val formatter: PlanningMessageFormatter,
+    val identityLinks: DiscordIdentityLinkRepository,
 ) : EventsPublisher {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -36,9 +38,14 @@ class DiscordEventsPublisher(
                     when (event) {
                         is PlanningGenerated -> {
                             val availabilityCalendar = availabilities.get()
+                            val absents = availabilityCalendar.unavailableFor(event.period)
+                            val planning = requireNotNull(plannings.findFor(event.period))
+                            val discordUsers =
+                                requireNotNull(identityLinks.findDiscordSnowflakesByResponsibles(planning.responsibles + absents))
                             val msg = formatter.formatCompact(
-                                planning = requireNotNull(plannings.findFor(event.period)),
-                                absents = availabilityCalendar.unavailableFor(event.period)
+                                planning = planning,
+                                absents = absents,
+                                discordUsers = discordUsers
                             )
                             channel.createMessage(msg)
                         }

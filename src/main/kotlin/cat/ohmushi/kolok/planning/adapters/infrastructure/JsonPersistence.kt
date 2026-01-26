@@ -8,7 +8,8 @@ import kotlin.io.path.absolutePathString
 
 data class JsonFile(
     val absences: List<AbsenceFileEntry> = emptyList(),
-    val responsibilityVersions: List<ResponsibilitiesVersionFileEntry> = emptyList()
+    val responsibilityVersions: List<ResponsibilitiesVersionFileEntry> = emptyList(),
+    val discordUsers: List<DiscordUser> = emptyList(),
 )
 
 data class AbsenceFileEntry(
@@ -20,6 +21,11 @@ data class AbsenceFileEntry(
 data class ResponsibilitiesVersionFileEntry(
     val from: String,
     val responsibilities: List<String>
+)
+
+data class DiscordUser(
+    val responsible: String,
+    val snowflake: String,
 )
 
 class JsonPersistence(
