@@ -22,6 +22,7 @@ import cat.ohmushi.kolok.planning.domain.rotation.ValidateInputsPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.ShiftByOneRotationPolicy
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.nio.file.Paths
@@ -77,6 +78,7 @@ class Wiring {
     fun rosterProvider(): RosterProvider = FixedRosterProvider()
 
     @Bean
+    @Primary
     fun planningRepository(mapper: ObjectMapper): PlanningRepository = FilePlanningRepository(
         path = planningsPath,
         mapper = mapper

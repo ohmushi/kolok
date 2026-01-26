@@ -3,7 +3,7 @@ package cat.ohmushi.kolok.planning.application.services
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
-import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
+import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
@@ -72,7 +72,7 @@ class PlanningServiceTest {
             val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
-            val publisher = CapturingEventPublisher()
+            val publisher = CapturingEventsPublisher()
 
             val command = GeneratePlanningCommand(period = periodS)
 
@@ -82,7 +82,7 @@ class PlanningServiceTest {
                 activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
-                eventPublisher = publisher
+                eventsPublisher = publisher
             ).generatePlanning(command)
 
             assertThat(repo.lastFindLatestBeforeArg).isEqualTo(periodS)
@@ -127,7 +127,7 @@ class PlanningServiceTest {
             val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
-            val publisher = CapturingEventPublisher()
+            val publisher = CapturingEventsPublisher()
 
             val useCase = PlanningService(
                 planningRepository = repo,
@@ -135,7 +135,7 @@ class PlanningServiceTest {
                 activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
-                eventPublisher = publisher
+                eventsPublisher = publisher
             )
 
             val command = GeneratePlanningCommand(period = periodS)
@@ -170,7 +170,7 @@ class PlanningServiceTest {
             val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = planning)
-            val publisher = CapturingEventPublisher()
+            val publisher = CapturingEventsPublisher()
 
             val useCase = PlanningService(
                 planningRepository = repo,
@@ -178,14 +178,14 @@ class PlanningServiceTest {
                 activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
-                eventPublisher = publisher
+                eventsPublisher = publisher
             )
 
             val command = GeneratePlanningCommand(period = periodS)
 
             useCase.generatePlanning(command)
 
-            assertThat(publisher.publishedEvents.any { it is PlanningGenerated && it.planning.period == periodS }).isTrue()
+            assertThat(publisher.publishedEvents.any { it is PlanningGenerated && it.period == periodS }).isTrue()
         }
 
         @Test
@@ -213,7 +213,7 @@ class PlanningServiceTest {
                     )
                 )
             )
-            val publisher = CapturingEventPublisher()
+            val publisher = CapturingEventsPublisher()
 
             val useCase = PlanningService(
                 planningRepository = repo,
@@ -221,7 +221,7 @@ class PlanningServiceTest {
                 activeResponsibilitiesPort = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
-                eventPublisher = publisher
+                eventsPublisher = publisher
             )
 
             val command = GeneratePlanningCommand(period = periodS)
@@ -248,6 +248,10 @@ class PlanningServiceTest {
 
         override fun save(planning: Planning) {
             saved += planning
+        }
+
+        override fun findFor(period: Period): Planning? {
+            TODO("Not yet implemented")
         }
     }
 
@@ -297,7 +301,7 @@ class PlanningServiceTest {
         }
     }
 
-    private class CapturingEventPublisher : EventPublisher {
+    private class CapturingEventsPublisher : EventsPublisher {
 
         val publishedEvents = mutableListOf<DomainEvent>()
 

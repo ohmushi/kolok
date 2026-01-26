@@ -6,16 +6,16 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.CancelAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
-import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
+import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 
 @ApplicationService
 data class AvailabilityService(
     val availabilityCalendarRepository: AvailabilityCalendarRepository,
-    val eventPublisher: EventPublisher
+    val eventsPublisher: EventsPublisher
 ) : RecordAbsenceUseCase, CancelAbsenceUseCase {
 
     override fun recordAbsence(command: RecordAbsenceCommand) {
-        val availabilityCalendar = requireNotNull(availabilityCalendarRepository.get()) { "AvailabilityCalendar not initialized" }
+        val availabilityCalendar = availabilityCalendarRepository.get()
 
         val updated = availabilityCalendar.recordAbsence(
             responsible = command.responsible,
@@ -26,7 +26,7 @@ data class AvailabilityService(
         val (clean, events) = updated.consumeEvents()
 
         availabilityCalendarRepository.save(clean)
-        eventPublisher.publish(events)
+        eventsPublisher.publish(events)
     }
 
     override fun cancelAbsence(command: CancelAbsenceCommand) {
@@ -41,7 +41,7 @@ data class AvailabilityService(
         val (clean, events) = updated.consumeEvents()
 
         availabilityCalendarRepository.save(clean)
-        eventPublisher.publish(events)
+        eventsPublisher.publish(events)
     }
 }
 

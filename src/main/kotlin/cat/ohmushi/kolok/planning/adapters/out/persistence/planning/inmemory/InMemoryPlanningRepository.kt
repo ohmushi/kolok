@@ -20,4 +20,8 @@ class InMemoryPlanningRepository: PlanningRepository {
         store.removeIf { it.period == planning.period }
         store += planning
     }
+
+    override fun findFor(period: Period): Planning? {
+        return store.find { it.period == period }
+    }
 }

@@ -6,7 +6,7 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningResult
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
-import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
+import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
@@ -19,7 +19,7 @@ data class PlanningService (
     val planningRepository: PlanningRepository,
     val rotationPolicy: RotationPolicy,
     val planningFactory: PlanningFactory,
-    val eventPublisher: EventPublisher,
+    val eventsPublisher: EventsPublisher,
     val availableResponsiblesPort: AvailableResponsiblesPort,
     val activeResponsibilitiesPort: ActiveResponsibilitiesPort,
 )
@@ -41,9 +41,9 @@ data class PlanningService (
 
         planningRepository.save(planning)
 
-        events.add(PlanningGenerated(planning = planning))
+        events.add(PlanningGenerated(period = command.period))
 
-        eventPublisher.publish(events)
+        eventsPublisher.publish(events)
         return GeneratePlanningResult(planning = planning, events = events)
     }
 

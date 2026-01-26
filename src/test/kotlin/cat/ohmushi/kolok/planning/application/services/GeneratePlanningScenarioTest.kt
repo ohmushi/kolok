@@ -4,7 +4,7 @@ import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.inmemory.InM
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
-import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
+import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.bootstrap.Wiring
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.planning.DefaultPlanningFactory
@@ -43,7 +43,7 @@ class GeneratePlanningScenarioTest {
         val repo = InMemoryPlanningRepository()
         val responsiblesPort = FixedAvailableResponsiblesPort(listOf(fabio, theo, charles))
         val responsibilitiesPort = FixedActiveResponsibilitiesPort(listOf(cuisine, bathroom, livingRoom))
-        val publisher = CapturingEventPublisher()
+        val publisher = CapturingEventsPublisher()
 
         val factory = DefaultPlanningFactory()
 
@@ -53,7 +53,7 @@ class GeneratePlanningScenarioTest {
             activeResponsibilitiesPort = responsibilitiesPort,
             rotationPolicy = rotationPolicy,
             planningFactory = factory,
-            eventPublisher = publisher
+            eventsPublisher = publisher
         )
 
         val initial = Planning(
@@ -84,7 +84,7 @@ class GeneratePlanningScenarioTest {
 
         val generatedPeriods = publisher.publishedEvents
             .filterIsInstance<PlanningGenerated>()
-            .map { it.planning.period }
+            .map { it.period }
 
         assertThat(generatedPeriods).containsExactly(p1, p2)
     }
@@ -97,7 +97,7 @@ class GeneratePlanningScenarioTest {
         val repo = InMemoryPlanningRepository()
         val responsiblesPort = FixedAvailableResponsiblesPort(listOf(fabio, theo, charles))
         val responsibilitiesPort = FixedActiveResponsibilitiesPort(listOf(cuisine, bathroom, livingRoom, toilets, trash))
-        val publisher = CapturingEventPublisher()
+        val publisher = CapturingEventsPublisher()
 
         val service = PlanningService(
             planningRepository = repo,
@@ -105,7 +105,7 @@ class GeneratePlanningScenarioTest {
             activeResponsibilitiesPort = responsibilitiesPort,
             rotationPolicy = rotationPolicy,
             planningFactory = DefaultPlanningFactory(),
-            eventPublisher = publisher
+            eventsPublisher = publisher
         )
 
         val initial = Planning(
@@ -134,7 +134,7 @@ class GeneratePlanningScenarioTest {
             .single()
 
         assertThat(loads.getOrDefault(hadOneInPrevious, 0)).isEqualTo(2)
-        assertThat(publisher.publishedEvents.filterIsInstance<PlanningGenerated>().map { it.planning.period })
+        assertThat(publisher.publishedEvents.filterIsInstance<PlanningGenerated>().map { it.period })
             .containsExactly(p1)
     }
 
@@ -155,7 +155,7 @@ class GeneratePlanningScenarioTest {
             )
         )
         val responsibilitiesPort = FixedActiveResponsibilitiesPort(listOf(cuisine, bathroom, livingRoom))
-        val publisher = CapturingEventPublisher()
+        val publisher = CapturingEventsPublisher()
 
         val service = PlanningService(
             planningRepository = repo,
@@ -163,7 +163,7 @@ class GeneratePlanningScenarioTest {
             activeResponsibilitiesPort = responsibilitiesPort,
             rotationPolicy = rotationPolicy,
             planningFactory = DefaultPlanningFactory(),
-            eventPublisher = publisher
+            eventsPublisher = publisher
         )
 
         val initial = Planning(
@@ -216,7 +216,7 @@ class GeneratePlanningScenarioTest {
                 p1 to listOf(cuisine, bathroom, livingRoom, toilets)
             )
         )
-        val publisher = CapturingEventPublisher()
+        val publisher = CapturingEventsPublisher()
 
         val service = PlanningService(
             planningRepository = repo,
@@ -224,7 +224,7 @@ class GeneratePlanningScenarioTest {
             activeResponsibilitiesPort = responsibilitiesPort,
             rotationPolicy = rotationPolicy,
             planningFactory = DefaultPlanningFactory(),
-            eventPublisher = publisher
+            eventsPublisher = publisher
         )
 
         val initial = Planning(
@@ -263,7 +263,7 @@ class GeneratePlanningScenarioTest {
         override fun getFor(period: Period): List<Responsibility> = responsibilities
     }
 
-    private class CapturingEventPublisher : EventPublisher {
+    private class CapturingEventsPublisher : EventsPublisher {
         val publishedEvents = mutableListOf<DomainEvent>()
         override fun publish(events: List<DomainEvent>) {
             publishedEvents += events

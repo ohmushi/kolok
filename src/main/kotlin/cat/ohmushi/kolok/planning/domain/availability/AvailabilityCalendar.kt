@@ -21,14 +21,9 @@ class AvailabilityCalendar private constructor(
     }
 
     fun availableFor(period: Period): List<Responsible> {
-        val absent = absences
-            .filter { it.covers(period) }
-            .map { it.responsible }
-            .toSet()
+        val absent = unavailableFor(period).toSet()
 
-        return roster
-            .filterNot { it in absent }
-            .sortedBy { it.name }
+        return roster.filterNot { it in absent }
     }
 
     fun recordAbsence(responsible: Responsible, from: Period, to: Period): AvailabilityCalendar {
@@ -68,4 +63,11 @@ class AvailabilityCalendar private constructor(
 
     fun snapshotAbsences(): List<Absence> =
         absences.toList()
+
+    fun unavailableFor(period: Period): List<Responsible> {
+        return absences
+            .filter { it.covers(period) }
+            .map { it.responsible }
+            .sortedBy { it.name }
+    }
 }

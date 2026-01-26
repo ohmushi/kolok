@@ -37,7 +37,7 @@ class AvailabilityCalendarTest {
 
         val available = calendar.availableFor(p0)
 
-        assertThat(available).containsExactly(charles, fabio, theo)
+        assertThat(available).containsExactly(theo, fabio, charles)
     }
 
     @Test
@@ -58,7 +58,7 @@ class AvailabilityCalendarTest {
 
     @Test
     fun recordAbsence_shouldRemoveResponsibleFromAvailability_inInclusiveRange() {
-        val calendar = AvailabilityCalendar.create(setOf(fabio, theo, charles))
+        val calendar = AvailabilityCalendar.create(setOf(charles, fabio, theo))
             .recordAbsence(theo, p1, p2)
 
         assertThat(calendar.availableFor(p0)).containsExactly(charles, fabio, theo)
@@ -69,7 +69,7 @@ class AvailabilityCalendarTest {
 
     @Test
     fun recordAbsence_shouldBeAdditive_whenMultipleAbsences() {
-        val calendar = AvailabilityCalendar.create(setOf(fabio, theo, charles))
+        val calendar = AvailabilityCalendar.create(setOf(charles, fabio, theo))
             .recordAbsence(theo, p1, p2)
             .recordAbsence(charles, p2, p3)
 
@@ -105,7 +105,7 @@ class AvailabilityCalendarTest {
 
     @Test
     fun cancelAbsence_shouldRestoreAvailability() {
-        val calendar = AvailabilityCalendar.create(setOf(fabio, theo, charles))
+        val calendar = AvailabilityCalendar.create(setOf(charles, fabio, theo))
             .recordAbsence(theo, p1, p2)
 
         val restored = calendar.cancelAbsence(theo, p1, p2)

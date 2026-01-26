@@ -44,6 +44,10 @@ class FilePlanningRepository(
         writeAll(all)
     }
 
+    override fun findFor(period: Period): Planning? {
+        return readAll().find { it.period == period }
+    }
+
     private fun readAll(): List<Planning> {
         if (!Files.exists(path)) return emptyList()
 

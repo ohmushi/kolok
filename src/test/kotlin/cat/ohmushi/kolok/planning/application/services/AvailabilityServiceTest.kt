@@ -4,7 +4,7 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.CancelAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.CancelAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
-import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
+import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Responsible
@@ -31,12 +31,12 @@ class AvailabilityServiceTest {
 
 
     abstract class Base {
-        protected val publisher = CapturingEventPublisher()
+        protected val publisher = CapturingEventsPublisher()
         protected val repo = InMemoryAvailabilityCalendarRepository()
 
         protected var service = AvailabilityService(
             availabilityCalendarRepository = repo,
-            eventPublisher = publisher
+            eventsPublisher = publisher
         )
 
         protected fun recordUseCase(): RecordAbsenceUseCase = service
@@ -190,7 +190,7 @@ class AvailabilityServiceTest {
         var current: AvailabilityCalendar? = null
         var saved: AvailabilityCalendar? = null
 
-        override fun get(): AvailabilityCalendar? = current
+        override fun get(): AvailabilityCalendar = current ?: AvailabilityCalendar.create(roster = setOf(charles, fabio, theo))
 
         override fun save(calendar: AvailabilityCalendar) {
             current = calendar
@@ -198,12 +198,12 @@ class AvailabilityServiceTest {
         }
 
         fun reset() {
-            current = AvailabilityCalendar.create(roster = setOf(fabio, theo, charles))
+            current = AvailabilityCalendar.create(roster = setOf(charles, fabio, theo))
             saved = null
         }
     }
 
-    class CapturingEventPublisher : EventPublisher {
+    class CapturingEventsPublisher : EventsPublisher {
         val publishedEvents = mutableListOf<DomainEvent>()
         override fun publish(events: List<DomainEvent>) {
             publishedEvents += events

@@ -16,7 +16,7 @@ class JsonAvailabilityCalendarRepository(
     private val rosterProvider: RosterProvider
 ) : AvailabilityCalendarRepository {
 
-    override fun get(): AvailabilityCalendar? {
+    override fun get(): AvailabilityCalendar {
         val file = jsonPersistence.read()
         val roster = rosterProvider.roster()
 
