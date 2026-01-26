@@ -1,9 +1,10 @@
-package cat.ohmushi.kolok.planning.adapters.out.persistence
+package cat.ohmushi.kolok.planning.adapters.infrastructure
 
 import tools.jackson.databind.ObjectMapper
 import java.nio.file.Files
 import java.nio.file.Path
 import tools.jackson.module.kotlin.readValue
+import kotlin.io.path.absolutePathString
 
 data class JsonFile(
     val absences: List<AbsenceFileEntry> = emptyList(),
@@ -26,7 +27,7 @@ class JsonPersistence(
     private val mapper: ObjectMapper
 ) {
     fun read(): JsonFile {
-        if (!Files.exists(path)) return JsonFile()
+        if (!Files.exists(path)) throw Exception("File [${path.absolutePathString()}] doesn't exist.")
         return Files.newBufferedReader(path).use { reader -> mapper.readValue(reader) }
     }
 

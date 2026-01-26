@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.adapters.out.persistence.availability
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.AbsenceFileEntry
-import cat.ohmushi.kolok.planning.adapters.out.persistence.JsonPersistence
+import cat.ohmushi.kolok.planning.adapters.infrastructure.AbsenceFileEntry
+import cat.ohmushi.kolok.planning.adapters.infrastructure.JsonPersistence
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
 import cat.ohmushi.kolok.planning.domain.Period

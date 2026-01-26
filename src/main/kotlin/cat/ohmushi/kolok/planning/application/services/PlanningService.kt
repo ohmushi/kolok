@@ -8,6 +8,7 @@ import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPo
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
+import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
@@ -26,6 +27,7 @@ data class PlanningService (
 {
     override fun generatePlanning(command: GeneratePlanningCommand): GeneratePlanningResult {
         val previous = planningRepository.findLatestBefore(command.period)
+        val events = mutableListOf<DomainEvent>()
 
         val request = RotationRequest(
             period = command.period,
@@ -39,7 +41,7 @@ data class PlanningService (
 
         planningRepository.save(planning)
 
-        val events = listOf(PlanningGenerated(period = planning.period))
+        events.add(PlanningGenerated(planning = planning))
 
         eventPublisher.publish(events)
         return GeneratePlanningResult(planning = planning, events = events)

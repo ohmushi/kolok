@@ -84,7 +84,7 @@ class GeneratePlanningScenarioTest {
 
         val generatedPeriods = publisher.publishedEvents
             .filterIsInstance<PlanningGenerated>()
-            .map { it.period }
+            .map { it.planning.period }
 
         assertThat(generatedPeriods).containsExactly(p1, p2)
     }
@@ -134,7 +134,7 @@ class GeneratePlanningScenarioTest {
             .single()
 
         assertThat(loads.getOrDefault(hadOneInPrevious, 0)).isEqualTo(2)
-        assertThat(publisher.publishedEvents.filterIsInstance<PlanningGenerated>().map { it.period })
+        assertThat(publisher.publishedEvents.filterIsInstance<PlanningGenerated>().map { it.planning.period })
             .containsExactly(p1)
     }
 

@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.JsonPersistence
-import cat.ohmushi.kolok.planning.adapters.out.persistence.ResponsibilitiesVersionFileEntry
+import cat.ohmushi.kolok.planning.adapters.infrastructure.JsonPersistence
+import cat.ohmushi.kolok.planning.adapters.infrastructure.ResponsibilitiesVersionFileEntry
 import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Responsibility
@@ -35,10 +35,10 @@ class JsonResponsibilitiesCatalogRepository(
         return clean
     }
 
-    override fun save(catalogAgg: ResponsibilitiesCatalog) {
+    override fun save(catalog: ResponsibilitiesCatalog) {
         val file = jsonPersistence.read()
 
-        val versions = catalogAgg.snapshotVersions().map { v ->
+        val versions = catalog.snapshotVersions().map { v ->
             ResponsibilitiesVersionFileEntry(
                 from = v.from.start.toString(),
                 responsibilities = v.responsibilities.map { it.name }.sorted()

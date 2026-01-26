@@ -2,17 +2,15 @@ package cat.ohmushi.kolok.planning.bootstrap
 
 import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.AvailableResponsiblesAdapter
 import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.FixedRosterProvider
-import cat.ohmushi.kolok.planning.adapters.out.persistence.JsonPersistence
+import cat.ohmushi.kolok.planning.adapters.infrastructure.JsonPersistence
 import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.FilePlanningRepository
 import cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities.ActiveResponsibilitiesAdapter
 import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
-import cat.ohmushi.kolok.planning.application.ports.out.EventPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
 import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
-import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.rotation.BalanceLoadPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.BootstrapIfNoPreviousPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.CompositeRotationPolicy
@@ -31,8 +29,8 @@ import java.nio.file.Paths
 @Configuration
 class Wiring {
 
-    val catalogPath = Paths.get("data/catalog.json")
-    val planningsPath = Paths.get("data/plannings.json")
+    val catalogPath = Paths.get("back/data/catalog.json")
+    val planningsPath = Paths.get("back/data/plannings.json")
 
 
     @Bean
@@ -83,11 +81,4 @@ class Wiring {
         path = planningsPath,
         mapper = mapper
     )
-
-    @Bean
-    fun eventPublisher(): EventPublisher = object : EventPublisher {
-        override fun publish(events: List<DomainEvent>) {
-            // DO nothing
-        }
-    }
 }

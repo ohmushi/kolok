@@ -1,5 +1,5 @@
 package cat.ohmushi.kolok.planning.domain.events
 
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Planning
 
-data class PlanningGenerated(val period: Period) : DomainEvent
+data class PlanningGenerated(val planning: Planning) : DomainEvent

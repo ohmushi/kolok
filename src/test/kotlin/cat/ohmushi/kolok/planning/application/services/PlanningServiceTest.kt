@@ -185,7 +185,7 @@ class PlanningServiceTest {
 
             useCase.generatePlanning(command)
 
-            assertThat(publisher.publishedEvents.any { it is PlanningGenerated && it.period == periodS }).isTrue()
+            assertThat(publisher.publishedEvents.any { it is PlanningGenerated && it.planning.period == periodS }).isTrue()
         }
 
         @Test
