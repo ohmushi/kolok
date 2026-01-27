@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.adapters.`in`
+package cat.ohmushi.kolok.planning.adapters.`in`.rest
 
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningUseCase

@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.adapters.`in`
+package cat.ohmushi.kolok.planning.adapters.`in`.rest
 
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
