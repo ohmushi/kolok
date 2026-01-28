@@ -21,7 +21,7 @@ import java.time.LocalDate
 
 class GeneratePlanningScenarioTest {
 
-    val wiring = Wiring()
+    val wiring = Wiring("back/src/test/resources/persistence")
     val rotationPolicy: RotationPolicy = wiring.rotationPolity()
 
     private val fabio = Responsible("Fabio")

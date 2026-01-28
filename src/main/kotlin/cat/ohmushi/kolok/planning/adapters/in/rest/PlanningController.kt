@@ -16,7 +16,6 @@ import java.time.LocalDate
 class PlanningRestController(
     private val getPlanningUseCase: GeneratePlanningUseCase
 ) {
-
     @GetMapping("/{period}")
     fun getByPeriod(@PathVariable period: String): ResponseEntity<PlanningResponse> {
         val start = runCatching { LocalDate.parse(period) }.getOrNull()

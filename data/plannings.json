@@ -80,4 +80,21 @@
     "responsible" : "Fabio",
     "responsibility" : "Toilettes"
   } ]
+}, {
+  "periodStart" : "2026-02-09",
+  "responsibles" : [ "Fabio", "Charles", "Theo" ],
+  "responsibilities" : [ "Cuisine", "Salle de bain", "Salon", "Toilettes" ],
+  "assignments" : [ {
+    "responsible" : "Theo",
+    "responsibility" : "Salle de bain"
+  }, {
+    "responsible" : "Fabio",
+    "responsibility" : "Salon"
+  }, {
+    "responsible" : "Fabio",
+    "responsibility" : "Cuisine"
+  }, {
+    "responsible" : "Charles",
+    "responsibility" : "Toilettes"
+  } ]
 } ]

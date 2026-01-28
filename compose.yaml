@@ -1,1 +1,49 @@
-services: { }
+services:
+  kolok:
+    container_name: kolok-back
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kolok/back:local
+    ports:
+      - "8080:8080"
+
+    env_file:
+      - .env
+    environment:
+      JAVA_OPTS: "-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport"
+      # Si tu utilises Spring profiles, décommente/ajuste
+      # SPRING_PROFILES_ACTIVE: "docker"
+      # Si tu actives le service `db` (profile 'db'), pense à configurer la datasource :
+      # SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/kolok"
+      # SPRING_DATASOURCE_USERNAME: "kolok"
+      # SPRING_DATASOURCE_PASSWORD: "kolok"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    container_name: kolok-db
+    profiles: ["db"]
+    environment:
+      POSTGRES_DB: kolok
+      POSTGRES_USER: kolok
+      POSTGRES_PASSWORD: kolok
+    ports:
+      - "5432:5432"
+    volumes:
+      - kolok_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kolok -d kolok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  kolok_db:

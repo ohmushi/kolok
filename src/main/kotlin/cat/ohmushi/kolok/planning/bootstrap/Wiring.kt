@@ -20,6 +20,7 @@ import cat.ohmushi.kolok.planning.domain.rotation.ProjectPreviousAssignmentsPoli
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.ValidateInputsPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.ShiftByOneRotationPolicy
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -28,10 +29,12 @@ import tools.jackson.module.kotlin.jacksonObjectMapper
 import java.nio.file.Paths
 
 @Configuration
-class Wiring {
+class Wiring(
+    @Value("\${persistense.json.path}") private val jsonDirectoryPath: String,
+) {
 
-    val catalogPath = Paths.get("back/data/catalog.json")
-    val planningsPath = Paths.get("back/data/plannings.json")
+    val catalogPath = Paths.get("$jsonDirectoryPath/catalog.json")
+    val planningsPath = Paths.get("$jsonDirectoryPath/plannings.json")
 
 
     @Bean

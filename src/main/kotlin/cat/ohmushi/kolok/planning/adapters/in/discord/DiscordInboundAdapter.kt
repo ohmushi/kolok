@@ -17,17 +17,6 @@ sealed interface DiscordEventHandler<E: Event> {
 }
 
 @Component
-class MessageCreatedHandler : DiscordEventHandler<MessageCreateEvent> {
-    override suspend fun handle(event: MessageCreateEvent) {
-        // ignore other bots, even ourselves. We only serve humans here!
-        if (event.message.author?.isBot != false) return
-
-        // all clear, give them the pong!
-        event.message.channel.createMessage("pong!")
-    }
-}
-
-@Component
 class DiscordInboundAdapter(
     private val discordConnexion: DiscordConnexion,
     private val messageHandler: MessageCreatedHandler
@@ -41,5 +30,15 @@ class DiscordInboundAdapter(
                 kord.on<MessageCreateEvent> { messageHandler.handle(this) }
             }
         }
+    }
+}
+
+@Component
+class MessageCreatedHandler : DiscordEventHandler<MessageCreateEvent> {
+    override suspend fun handle(event: MessageCreateEvent) {
+        if (event.message.author?.isBot != false) return
+
+        // all clear, give them the pong!
+        event.message.channel.createMessage("pong!")
     }
 }
