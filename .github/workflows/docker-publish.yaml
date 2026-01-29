@@ -55,7 +55,7 @@ jobs:
           tags: |
             type=raw,value=latest
             type=sha
-            type=raw,value=date-${{ steps.date.outputs.utc }}
+            type=raw,value=${{ steps.date.outputs.iso }}
           labels: |
             org.opencontainers.image.created=${{ steps.date.outputs.iso }}
 
