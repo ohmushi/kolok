@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kolok-jar
-          path: back/target/*.jar
+          path: target/*.jar
           if-no-files-found: error
