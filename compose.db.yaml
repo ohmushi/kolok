@@ -1,0 +1,23 @@
+services:
+  kolok:
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16-alpine
+    container_name: kolok-db
+    profiles: [ "db" ]
+    environment:
+      POSTGRES_DB: kolok
+      POSTGRES_USER: kolok
+      POSTGRES_PASSWORD: kolok
+    ports:
+      - "5432:5432"
+    volumes:
+      - kolok_db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U kolok -d kolok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
