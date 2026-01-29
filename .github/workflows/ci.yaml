@@ -2,12 +2,8 @@ name: ci
 
 on:
   pull_request:
-    paths:
-      - "back/**"
   push:
     branches: ["main"]
-    paths:
-      - "back/**"
 
 permissions:
   contents: read
