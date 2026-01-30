@@ -2,7 +2,7 @@ package cat.ohmushi.kolok.planning.adapters.out.events
 
 import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
-import cat.ohmushi.kolok.planning.application.ports.out.DiscordIdentityLinkRepository
+import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
@@ -29,7 +29,7 @@ class DiscordEventsPublisher(
     private val plannings: PlanningRepository,
     private val availabilities: AvailabilityCalendarRepository,
     private val formatter: PlanningMessageFormatter,
-    private val identityLinks: DiscordIdentityLinkRepository,
+    private val identityLinks: UserIdentityLinkRepository,
 ) : EventsPublisher {
 
     private val logger = KotlinLogging.logger {}
@@ -99,7 +99,7 @@ data class PlanningGeneratedHandler(
     val plannings: PlanningRepository,
     val availabilities: AvailabilityCalendarRepository,
     val formatter: PlanningMessageFormatter,
-    val identityLinks: DiscordIdentityLinkRepository,
+    val identityLinks: UserIdentityLinkRepository,
     val channel: MessageChannel,
 ) : EventHandler<PlanningGenerated> {
 
@@ -107,12 +107,11 @@ data class PlanningGeneratedHandler(
         val availabilityCalendar = availabilities.get()
         val absents = availabilityCalendar.unavailableFor(event.period)
         val planning = requireNotNull(plannings.findFor(event.period))
-        val discordUsers =
-            requireNotNull(identityLinks.findDiscordSnowflakesByResponsibles(planning.responsibles + absents))
+        val discordUsers = identityLinks.findUsersByResponsibles(planning.responsibles + absents)
         val msg = formatter.formatCompact(
             planning = planning,
             absents = absents,
-            discordUsers = discordUsers
+            users = discordUsers
         )
         channel.createMessage(msg)
     }

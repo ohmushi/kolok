@@ -59,7 +59,7 @@ class AvailabilityServiceTest {
                 RecordAbsenceCommand(
                     responsible = theo,
                     from = p1,
-                    toIncluded = p2
+                    periodsCount = 2
                 )
             )
 
@@ -69,7 +69,7 @@ class AvailabilityServiceTest {
             assertThat(repo.saved!!.availableFor(p3)).containsExactly(charles, fabio, theo)
 
             assertThat(publisher.publishedEvents).containsExactly(
-                AbsenceRecorded(responsible = theo, from = p1, to = p2)
+                AbsenceRecorded(responsible = theo, from = p1, periodsCount = 2)
             )
         }
 
@@ -82,7 +82,7 @@ class AvailabilityServiceTest {
                     RecordAbsenceCommand(
                         responsible = outsider,
                         from = p1,
-                        toIncluded = p2
+                        periodsCount = 2
                     )
                 )
             }.isInstanceOf(IllegalArgumentException::class.java)
@@ -92,13 +92,13 @@ class AvailabilityServiceTest {
         }
 
         @Test
-        fun execute_shouldFail_whenFromAfterTo_andNotSaveOrPublish() {
+        fun execute_shouldFail_whenPeriodsCountInvalid_andNotSaveOrPublish() {
             assertThatThrownBy {
                 recordUseCase().recordAbsence(
                     RecordAbsenceCommand(
                         responsible = theo,
-                        from = p2,
-                        toIncluded = p1
+                        from = p1,
+                        periodsCount = 0
                     )
                 )
             }.isInstanceOf(IllegalArgumentException::class.java)
@@ -108,18 +108,38 @@ class AvailabilityServiceTest {
         }
 
         @Test
-        fun execute_shouldFail_whenSameAbsenceAlreadyRecorded_andNotSaveOrPublishSecondTime() {
-            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, p2))
+        fun execute_shouldBeIdempotent_whenSameAbsenceAlreadyRecorded_andNotPublishSecondTime() {
+            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, periodsCount = 2))
 
             publisher.publishedEvents.clear()
             repo.saved = null
 
-            assertThatThrownBy {
-                recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, p2))
-            }.isInstanceOf(IllegalArgumentException::class.java)
+            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, periodsCount = 2))
 
-            assertThat(repo.saved).isNull()
+            assertThat(repo.saved).isNotNull
             assertThat(publisher.publishedEvents).isEmpty()
+
+            assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio)
+            assertThat(repo.saved!!.availableFor(p2)).containsExactly(charles, fabio)
+            assertThat(repo.saved!!.availableFor(p3)).containsExactly(charles, fabio, theo)
+        }
+
+        @Test
+        fun execute_shouldDefaultToOnePeriod_whenPeriodsCountOmitted() {
+            recordUseCase().recordAbsence(
+                RecordAbsenceCommand(
+                    responsible = theo,
+                    from = p1,
+                )
+            )
+
+            assertThat(repo.saved).isNotNull
+            assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio)
+            assertThat(repo.saved!!.availableFor(p2)).containsExactly(charles, fabio, theo)
+
+            assertThat(publisher.publishedEvents).containsExactly(
+                AbsenceRecorded(responsible = theo, from = p1, periodsCount = 1)
+            )
         }
     }
 
@@ -134,24 +154,26 @@ class AvailabilityServiceTest {
 
         @Test
         fun execute_shouldCancelAbsence_save_andPublishEvent() {
-            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, p2))
+            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, periodsCount = 2))
             val before = publisher.publishedEvents.toList()
 
-            cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, p2))
+            cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, periodsCount = 2))
 
             assertThat(repo.saved).isNotNull
             assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio, theo)
             assertThat(repo.saved!!.availableFor(p2)).containsExactly(charles, fabio, theo)
 
             assertThat(publisher.publishedEvents).containsExactlyElementsOf(before + listOf(
-                AbsenceCancelled(responsible = theo, from = p1, to = p2)
+                AbsenceCancelled(responsible = theo, from = p1, periodsCount = 2)
             ))
         }
 
         @Test
         fun execute_shouldFail_whenNoCalendarExists_andNotSaveOrPublish() {
+            repo.current = null
+
             assertThatThrownBy {
-                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, p2))
+                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, periodsCount = 2))
             }.isInstanceOf(IllegalArgumentException::class.java)
 
             assertThat(repo.saved).isNull()
@@ -163,7 +185,7 @@ class AvailabilityServiceTest {
             repo.current = AvailabilityCalendar.create(setOf(fabio, theo, charles))
 
             assertThatThrownBy {
-                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, p2))
+                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, periodsCount = 2))
             }.isInstanceOf(IllegalArgumentException::class.java)
 
             assertThat(repo.saved).isNull()
@@ -175,14 +197,29 @@ class AvailabilityServiceTest {
             val outsider = Responsible("Outsider")
 
             repo.current = AvailabilityCalendar.create(setOf(fabio, theo, charles))
-                .recordAbsence(theo, p1, p2)
+                .recordAbsence(theo, p1, periodsCount = 2)
 
             assertThatThrownBy {
-                cancelUseCase().cancelAbsence(CancelAbsenceCommand(outsider, p1, p2))
+                cancelUseCase().cancelAbsence(CancelAbsenceCommand(outsider, p1, periodsCount = 2))
             }.isInstanceOf(IllegalArgumentException::class.java)
 
             assertThat(repo.saved).isNull()
             assertThat(publisher.publishedEvents).isEmpty()
+        }
+
+        @Test
+        fun execute_shouldDefaultToOnePeriod_whenPeriodsCountOmitted() {
+            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1))
+            val before = publisher.publishedEvents.toList()
+
+            cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1))
+
+            assertThat(repo.saved).isNotNull
+            assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio, theo)
+
+            assertThat(publisher.publishedEvents).containsExactlyElementsOf(before + listOf(
+                AbsenceCancelled(responsible = theo, from = p1, periodsCount = 1)
+            ))
         }
     }
 

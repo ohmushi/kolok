@@ -26,14 +26,16 @@ class AvailabilityCalendar private constructor(
         return roster.filterNot { it in absent }
     }
 
-    fun recordAbsence(responsible: Responsible, from: Period, toIncluded: Period): AvailabilityCalendar {
+    fun recordAbsence(responsible: Responsible, from: Period, periodsCount: Int = 1): AvailabilityCalendar {
         require(responsible in roster)
+        require(periodsCount >= 1) { "periodsCount must be >= 1" }
 
+        val toIncluded = from.plus((periodsCount - 1).toLong())
         val absence = Absence(responsible, from, toIncluded)
-        require(absences.none { it == absence })
+        if (absences.any { it == absence }) return this
 
         val nextAbsences = absences + absence
-        val event = AbsenceRecorded(responsible = responsible, from = from, to = toIncluded)
+        val event = AbsenceRecorded(responsible = responsible, from = from, periodsCount = periodsCount)
 
         return AvailabilityCalendar(
             roster = roster,
@@ -42,14 +44,16 @@ class AvailabilityCalendar private constructor(
         )
     }
 
-    fun cancelAbsence(responsible: Responsible, from: Period, to: Period): AvailabilityCalendar {
+    fun cancelAbsence(responsible: Responsible, from: Period, periodsCount: Int = 1): AvailabilityCalendar {
         require(responsible in roster)
+        require(periodsCount >= 1) { "periodsCount must be >= 1" }
 
-        val target = Absence(responsible, from, to)
+        val toIncluded = from.plus((periodsCount - 1).toLong())
+        val target = Absence(responsible, from, toIncluded)
         require(absences.any { it == target })
 
         val nextAbsences = absences.filterNot { it == target }
-        val event = AbsenceCancelled(responsible = responsible, from = from, to = to)
+        val event = AbsenceCancelled(responsible = responsible, from = from, periodsCount = periodsCount)
 
         return AvailabilityCalendar(
             roster = roster,

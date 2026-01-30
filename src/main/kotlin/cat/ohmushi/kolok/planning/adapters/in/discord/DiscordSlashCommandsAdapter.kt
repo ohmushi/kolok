@@ -1,17 +1,18 @@
 package cat.ohmushi.kolok.planning.adapters.`in`.discord
 
 import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
-import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordId
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
-import cat.ohmushi.kolok.planning.application.ports.out.DiscordIdentityLinkRepository
+import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.domain.Period
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.interaction.respondEphemeral
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
+import dev.kord.rest.builder.interaction.integer
 import dev.kord.rest.builder.interaction.string
+import dev.kord.rest.builder.interaction.user
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ import java.time.LocalDate
 class DiscordSlashCommandsAdapter(
     private val discordConnexion: DiscordConnexion,
     private val recordAbsence: RecordAbsenceUseCase,
-    private val identityLinks: DiscordIdentityLinkRepository,
+    private val identityLinks: UserIdentityLinkRepository,
     @Value("\${discord.guild-id:}") private val guildId: String? = null,
 ) {
 
@@ -48,22 +49,16 @@ class DiscordSlashCommandsAdapter(
     private suspend fun registerCommands(kord: Kord) {
         val gid = guildId?.takeIf { it.isNotBlank() }?.let { Snowflake(it) }
 
+        val builder: dev.kord.rest.builder.interaction.ChatInputCreateBuilder.() -> Unit = {
+            user("absent", "Mention @ ou snowflake de l'utilisateur absent") { required = true }
+            string("start", "Début (YYYY-MM-DD, doit être un lundi)") { required = true }
+            integer("count", "Nombre de semaines d'absence, défaut=1") { required = false }
+        }
+
         if (gid != null) {
-            kord.createGuildChatInputCommand(
-                gid,
-                "absence",
-                "Enregistre une absence"
-            ) {
-                string("absent", "Mention @ ou snowflake de l'utilisateur absent") { required = true }
-                string("start", "Début (YYYY-MM-DD, doit être un lundi)") { required = true }
-                string("end", "Fin (YYYY-MM-DD, doit être un lundi)") { required = false }
-            }
+            kord.createGuildChatInputCommand(gid, "absence", "Enregistre une absence", builder)
         } else {
-            kord.createGlobalChatInputCommand("absence", "Enregistre une absence") {
-                string("absent", "Mention @ ou snowflake de l'utilisateur absent") { required = true }
-                string("start", "Début (YYYY-MM-DD, doit être un lundi)") { required = true }
-                string("end", "Fin (YYYY-MM-DD, doit être un lundi)") { required = false }
-            }
+            kord.createGlobalChatInputCommand("absence", "Enregistre une absence", builder)
         }
     }
 
@@ -71,34 +66,32 @@ class DiscordSlashCommandsAdapter(
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if (interaction.command.rootName != "absence") return@on
 
-            val absentRaw = interaction.command.strings["absent"]?.trim().orEmpty()
+            val absent = interaction.command.users["absent"]
             val fromStr = interaction.command.strings["start"]?.trim().orEmpty()
-            val toStr = interaction.command.strings["end"]?.trim()
+            val periodsCount = interaction.command.integers["count"]
 
             try {
-                val discordId = DiscordId.parse(absentRaw)
 
-                val responsible = identityLinks.findResponsibleIdByDiscordUserId(discordId.snowflake)
+                val responsible = identityLinks.findResponsibleIdByUserId(userId = absent?.id.toString())
                 if (responsible == null) {
                     interaction.respondEphemeral {
-                        content = "Aucun Responsable mappé pour discordUserId=${discordId.snowflake}."
+                        content = "Aucun Responsable trouvé pour user=${absent?.id}."
                     }
                     return@on
                 }
 
                 val from = parsePeriod(fromStr)
-                val to = if (toStr != null) parsePeriod(toStr) else from
 
                 recordAbsence.recordAbsence(
                     RecordAbsenceCommand(
                         responsible = responsible,
                         from = from,
-                        toIncluded = to
+                        periodsCount = periodsCount?.toInt() ?: 1,
                     )
                 )
 
                 interaction.respondEphemeral {
-                    content = "Absence enregistrée pour ${responsible.name} du ${from.start} au ${to.start}."
+                    content = "Absence enregistrée pour ${responsible.name} à partir du ${from.start} (durée: ${periodsCount} période(s))."
                 }
             } catch (e: IllegalArgumentException) {
                 interaction.respondEphemeral { content = "Entrée invalide: ${e.message}" }

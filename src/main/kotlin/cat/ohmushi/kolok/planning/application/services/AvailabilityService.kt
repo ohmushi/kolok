@@ -20,7 +20,7 @@ data class AvailabilityService(
         val updated = availabilityCalendar.recordAbsence(
             responsible = command.responsible,
             from = command.from,
-            toIncluded = command.toIncluded
+            periodsCount = command.periodsCount
         )
 
         val (clean, events) = updated.consumeEvents()
@@ -35,7 +35,7 @@ data class AvailabilityService(
         val updated = availabilityCalendar.cancelAbsence(
             responsible = command.responsible,
             from = command.from,
-            to = command.to
+            periodsCount = command.periodsCount
         )
 
         val (clean, events) = updated.consumeEvents()
@@ -44,4 +44,3 @@ data class AvailabilityService(
         eventsPublisher.publish(events)
     }
 }
-

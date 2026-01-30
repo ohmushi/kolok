@@ -23,10 +23,13 @@ class JsonAvailabilityCalendarRepository(
         val base = AvailabilityCalendar.create(roster)
 
         val rebuilt = file.absences.fold(base) { acc, a ->
+            val from = Period(LocalDate.parse(a.from))
+            val periodsCount = a.periodsCount.takeIf { it >= 1 } ?: 1
+
             acc.recordAbsence(
                 responsible = Responsible(a.responsible),
-                from = Period(LocalDate.parse(a.from)),
-                toIncluded = Period(LocalDate.parse(a.to))
+                from = from,
+                periodsCount = periodsCount
             )
         }
 
@@ -37,11 +40,11 @@ class JsonAvailabilityCalendarRepository(
     override fun save(calendar: AvailabilityCalendar) {
         val file = jsonPersistence.read()
 
-        val absences = calendar.snapshotAbsences().map {
+        val absences = calendar.snapshotAbsences().map { absence ->
             AbsenceFileEntry(
-                responsible = it.responsible.name,
-                from = it.from.start.toString(),
-                to = it.to.start.toString()
+                responsible = absence.responsible.name,
+                from = absence.from.start.toString(),
+                periodsCount = (absence.from..absence.to).size,
             )
         }
 
