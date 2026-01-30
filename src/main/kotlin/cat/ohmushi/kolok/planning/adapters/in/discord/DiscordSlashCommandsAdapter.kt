@@ -68,7 +68,7 @@ class DiscordSlashCommandsAdapter(
 
             val absent = interaction.command.users["absent"]
             val fromStr = interaction.command.strings["start"]?.trim().orEmpty()
-            val periodsCount = interaction.command.integers["count"]
+            val periodsCount = interaction.command.integers["count"]?.toInt() ?: 1
 
             try {
 
@@ -86,7 +86,7 @@ class DiscordSlashCommandsAdapter(
                     RecordAbsenceCommand(
                         responsible = responsible,
                         from = from,
-                        periodsCount = periodsCount?.toInt() ?: 1,
+                        periodsCount = periodsCount,
                     )
                 )
 
