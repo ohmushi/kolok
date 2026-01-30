@@ -26,7 +26,7 @@ class JsonAvailabilityCalendarRepository(
             acc.recordAbsence(
                 responsible = Responsible(a.responsible),
                 from = Period(LocalDate.parse(a.from)),
-                to = Period(LocalDate.parse(a.to))
+                toIncluded = Period(LocalDate.parse(a.to))
             )
         }
 

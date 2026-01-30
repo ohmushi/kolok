@@ -26,14 +26,14 @@ class AvailabilityCalendar private constructor(
         return roster.filterNot { it in absent }
     }
 
-    fun recordAbsence(responsible: Responsible, from: Period, to: Period): AvailabilityCalendar {
+    fun recordAbsence(responsible: Responsible, from: Period, toIncluded: Period): AvailabilityCalendar {
         require(responsible in roster)
 
-        val absence = Absence(responsible, from, to)
+        val absence = Absence(responsible, from, toIncluded)
         require(absences.none { it == absence })
 
         val nextAbsences = absences + absence
-        val event = AbsenceRecorded(responsible = responsible, from = from, to = to)
+        val event = AbsenceRecorded(responsible = responsible, from = from, to = toIncluded)
 
         return AvailabilityCalendar(
             roster = roster,

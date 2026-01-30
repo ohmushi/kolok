@@ -1,20 +1,25 @@
 {
-  "absences": [
-    { "responsible": "Theo", "from": "2026-01-12", "to": "2026-01-19" }
+  "absences" : [ {
+    "responsible" : "Theo",
+    "from" : "2026-01-12",
+    "to" : "2026-01-19"
+  }
   ],
-  "responsibilityVersions": [
-    {
-      "from": "2026-01-05",
-      "responsibilities": ["Cuisine", "Salle de bain", "Salon"]
-    },
-    {
-      "from": "2026-01-12",
-      "responsibilities": ["Cuisine", "Salle de bain", "Salon", "Toilettes"]
-    }
-  ],
-  "discordUsers": [
-    { "responsible":  "Theo", "snowflake": "288729200175611905"},
-    { "responsible":  "Charles", "snowflake": "313316596422803456"},
-    { "responsible":  "Fabio", "snowflake": "689121606760792075"}
-  ]
+  "responsibilityVersions" : [ {
+    "from" : "2026-01-05",
+    "responsibilities" : [ "Cuisine", "Salle de bain", "Salon" ]
+  }, {
+    "from" : "2026-01-12",
+    "responsibilities" : [ "Cuisine", "Salle de bain", "Salon", "Toilettes" ]
+  } ],
+  "discordUsers" : [ {
+    "responsible" : "Theo",
+    "snowflake" : "288729200175611905"
+  }, {
+    "responsible" : "Charles",
+    "snowflake" : "313316596422803456"
+  }, {
+    "responsible" : "Fabio",
+    "snowflake" : "689121606760792075"
+  } ]
 }

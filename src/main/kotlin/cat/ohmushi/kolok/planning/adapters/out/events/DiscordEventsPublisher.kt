@@ -9,12 +9,16 @@ import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.events.EventHandler
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import dev.kord.common.entity.Snowflake
+import dev.kord.core.Kord
 import dev.kord.core.entity.channel.MessageChannel
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 
@@ -22,36 +26,73 @@ import kotlin.reflect.KClass
 class DiscordEventsPublisher(
     private val discordConnexion: DiscordConnexion,
     @Value("\${discord.planning.channel}") private val channelId: String,
-    val plannings: PlanningRepository,
-    val availabilities: AvailabilityCalendarRepository,
-    val formatter: PlanningMessageFormatter,
-    val identityLinks: DiscordIdentityLinkRepository,
+    private val plannings: PlanningRepository,
+    private val availabilities: AvailabilityCalendarRepository,
+    private val formatter: PlanningMessageFormatter,
+    private val identityLinks: DiscordIdentityLinkRepository,
 ) : EventsPublisher {
+
+    private val logger = KotlinLogging.logger {}
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+
+    @Volatile
+    private var kord: Kord? = null
+
+    @Volatile
+    private var channel: MessageChannel? = null
+
+    @Suppress("UNCHECKED_CAST")
+    private fun handlers(): Map<KClass<out DomainEvent>, EventHandler<DomainEvent>> {
+        val ch = channel ?: return emptyMap()
+        return mapOf(
+            PlanningGenerated::class as KClass<DomainEvent> to PlanningGeneratedHandler(
+                plannings = plannings,
+                availabilities = availabilities,
+                formatter = formatter,
+                identityLinks = identityLinks,
+                channel = ch,
+            ) as EventHandler<DomainEvent>,
+        )
+    }
+
+    @EventListener(ApplicationReadyEvent::class)
+    fun warmupKordAndChannel() {
+        scope.launch {
+            try {
+                discordConnexion.withKord { k ->
+                    kord = k
+                    channel = requireNotNull(
+                        k.getChannelOf<MessageChannel>(Snowflake(channelId))
+                    ) { "Channel not found (id=$channelId)" }
+                }
+                logger.info { "DiscordEventsPublisher ready (channelId=$channelId)." }
+            } catch (t: Throwable) {
+                logger.error(t) { "DiscordEventsPublisher warmup failed; events won't be published to Discord." }
+                kord = null
+                channel = null
+            }
+        }
+    }
 
     override fun publish(events: List<DomainEvent>) {
         scope.launch {
-            discordConnexion.withKord { kord ->
-                val channel = requireNotNull(
-                    kord.getChannelOf<MessageChannel>(Snowflake(channelId)),
-                    { "Channel not found" })
+            val handlers = handlers()
+            if (handlers.isEmpty()) {
+                logger.debug { "Discord not ready; skipping ${events.size} event(s)." }
+                return@launch
+            }
 
-                @Suppress("UNCHECKED_CAST")
-                val handlers = mapOf(
-                    PlanningGenerated::class as KClass<DomainEvent> to PlanningGeneratedHandler(
-                        plannings = plannings,
-                        availabilities = availabilities,
-                        formatter = formatter,
-                        identityLinks = identityLinks,
-                        channel = channel
-                    ) as EventHandler<DomainEvent>,
-                )
-                for (event in events) handlers[event::class]?.handle(event)
+            for (event in events) {
+                try {
+                    handlers[event::class]?.handle(event)
+                } catch (t: Throwable) {
+                    logger.error(t) { "Failed to publish event ${event::class.simpleName} to Discord" }
+                }
             }
         }
     }
 }
-
 
 
 data class PlanningGeneratedHandler(
@@ -60,7 +101,7 @@ data class PlanningGeneratedHandler(
     val formatter: PlanningMessageFormatter,
     val identityLinks: DiscordIdentityLinkRepository,
     val channel: MessageChannel,
-): EventHandler<PlanningGenerated> {
+) : EventHandler<PlanningGenerated> {
 
     override suspend fun handle(event: PlanningGenerated) {
         val availabilityCalendar = availabilities.get()

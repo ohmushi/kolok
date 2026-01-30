@@ -59,7 +59,7 @@ class AvailabilityServiceTest {
                 RecordAbsenceCommand(
                     responsible = theo,
                     from = p1,
-                    to = p2
+                    toIncluded = p2
                 )
             )
 
@@ -82,7 +82,7 @@ class AvailabilityServiceTest {
                     RecordAbsenceCommand(
                         responsible = outsider,
                         from = p1,
-                        to = p2
+                        toIncluded = p2
                     )
                 )
             }.isInstanceOf(IllegalArgumentException::class.java)
@@ -98,7 +98,7 @@ class AvailabilityServiceTest {
                     RecordAbsenceCommand(
                         responsible = theo,
                         from = p2,
-                        to = p1
+                        toIncluded = p1
                     )
                 )
             }.isInstanceOf(IllegalArgumentException::class.java)

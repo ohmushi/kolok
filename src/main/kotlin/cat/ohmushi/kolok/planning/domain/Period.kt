@@ -6,7 +6,7 @@ import java.time.temporal.TemporalAdjusters
 
 data class Period(val start: LocalDate) {
     init {
-        require(start.dayOfWeek == DayOfWeek.MONDAY)
+        require(start.dayOfWeek == DayOfWeek.MONDAY, { "Period must start on a Monday" })
     }
     fun next(): Period {
         return Period(start.plusWeeks(1))

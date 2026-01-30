@@ -10,5 +10,5 @@ interface RecordAbsenceUseCase {
 data class RecordAbsenceCommand(
     val responsible: Responsible,
     val from: Period,
-    val to: Period
+    val toIncluded: Period
 )
