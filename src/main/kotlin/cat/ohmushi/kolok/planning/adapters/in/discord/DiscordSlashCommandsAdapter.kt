@@ -10,6 +10,7 @@ import dev.kord.core.Kord
 import dev.kord.core.behavior.interaction.respondEphemeral
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
+import dev.kord.rest.builder.interaction.ChatInputCreateBuilder
 import dev.kord.rest.builder.interaction.integer
 import dev.kord.rest.builder.interaction.string
 import dev.kord.rest.builder.interaction.user
@@ -49,8 +50,7 @@ class DiscordSlashCommandsAdapter(
     private suspend fun registerCommands(kord: Kord) {
         val gid = guildId?.takeIf { it.isNotBlank() }?.let { Snowflake(it) }
 
-        val builder: dev.kord.rest.builder.interaction.ChatInputCreateBuilder.() -> Unit = {
-            user("absent", "Mention @ ou snowflake de l'utilisateur absent") { required = true }
+        val builder: ChatInputCreateBuilder.() -> Unit = {
             string("start", "Début (YYYY-MM-DD, doit être un lundi)") { required = true }
             integer("count", "Nombre de semaines d'absence, défaut=1") { required = false }
         }
@@ -66,16 +66,16 @@ class DiscordSlashCommandsAdapter(
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if (interaction.command.rootName != "absence") return@on
 
-            val absent = interaction.command.users["absent"]
+            val absent = interaction.user.id.toString()
             val fromStr = interaction.command.strings["start"]?.trim().orEmpty()
             val periodsCount = interaction.command.integers["count"]?.toInt() ?: 1
 
             try {
 
-                val responsible = identityLinks.findResponsibleIdByUserId(userId = absent?.id.toString())
+                val responsible = identityLinks.findResponsibleIdByUserId(userId = absent)
                 if (responsible == null) {
                     interaction.respondEphemeral {
-                        content = "Aucun Responsable trouvé pour user=${absent?.id}."
+                        content = "Aucun Responsable trouvé pour user=${absent}."
                     }
                     return@on
                 }
