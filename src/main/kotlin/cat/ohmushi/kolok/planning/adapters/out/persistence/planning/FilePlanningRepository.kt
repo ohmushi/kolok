@@ -3,7 +3,7 @@ package cat.ohmushi.kolok.planning.adapters.out.persistence.planning
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import tools.jackson.databind.ObjectMapper

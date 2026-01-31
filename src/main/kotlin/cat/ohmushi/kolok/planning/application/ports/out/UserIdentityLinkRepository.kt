@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.application.ports.out
 
 import cat.ohmushi.kolok.planning.adapters.infrastructure.User
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 
 interface UserIdentityLinkRepository {
     fun findResponsibleIdByUserId(userId: String): Responsible?

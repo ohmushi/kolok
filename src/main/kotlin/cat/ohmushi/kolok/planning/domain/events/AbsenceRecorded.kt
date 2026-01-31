@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.domain.events
 
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 
 data class AbsenceRecorded(
     val responsible: Responsible,

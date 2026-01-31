@@ -4,7 +4,7 @@ import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDate

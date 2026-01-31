@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.domain.availabilities
 
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import cat.ohmushi.kolok.planning.domain.events.AbsenceCancelled
 import cat.ohmushi.kolok.planning.domain.events.AbsenceRecorded
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent

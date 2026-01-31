@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.adapters.out.persistence.availability
 
 import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import org.springframework.stereotype.Repository
 
 @Repository

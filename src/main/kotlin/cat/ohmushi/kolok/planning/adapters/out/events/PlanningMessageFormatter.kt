@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.adapters.out.events
 
 import cat.ohmushi.kolok.planning.adapters.infrastructure.User
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import org.springframework.stereotype.Component
 import java.time.format.DateTimeFormatter

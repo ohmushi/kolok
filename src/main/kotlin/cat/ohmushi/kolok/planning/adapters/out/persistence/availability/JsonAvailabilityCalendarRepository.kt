@@ -5,7 +5,7 @@ import cat.ohmushi.kolok.planning.adapters.infrastructure.JsonPersistence
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import cat.ohmushi.kolok.planning.domain.availabilities.AvailabilityCalendar
 import org.springframework.stereotype.Repository
 import java.time.LocalDate

@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.application.ports.`in`
 
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Responsible
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 
 interface RecordAbsenceUseCase {
     fun recordAbsence(command: RecordAbsenceCommand)
