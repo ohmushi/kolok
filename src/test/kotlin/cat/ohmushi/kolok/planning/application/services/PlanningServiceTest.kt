@@ -251,7 +251,7 @@ class PlanningServiceTest {
         }
 
         override fun findFor(period: Period): Planning? {
-            TODO("Not yet implemented")
+            return null
         }
     }
 

@@ -52,7 +52,6 @@ class Planning(
         val newResponsibilities = responsibilities + newResponsibility
         val currentLoads = loadPerResponsible()
 
-        //  TODO améliorable, et surtout à load égal ce sera tjrs le même selectionné, introduire la notion de loadPoint ?
         val chosen = responsibles
             .sortedWith(compareBy({ currentLoads.getOrDefault(it, 0) }, { it.name }))
             .first()
