@@ -9,7 +9,7 @@ import cat.ohmushi.kolok.planning.bootstrap.Wiring
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.planning.DefaultPlanningFactory
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility

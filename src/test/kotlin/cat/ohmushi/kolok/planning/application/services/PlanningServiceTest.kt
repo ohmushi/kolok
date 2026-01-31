@@ -7,7 +7,7 @@ import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated

@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.domain
+package cat.ohmushi.kolok.planning.domain.planning
 
 import java.time.DayOfWeek
 import java.time.LocalDate

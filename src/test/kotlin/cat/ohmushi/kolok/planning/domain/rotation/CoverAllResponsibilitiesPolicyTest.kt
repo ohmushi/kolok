@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.domain.rotation
 
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import org.assertj.core.api.Assertions.*

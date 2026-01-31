@@ -3,7 +3,7 @@ package cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities
 import cat.ohmushi.kolok.planning.adapters.infrastructure.JsonPersistence
 import cat.ohmushi.kolok.planning.adapters.infrastructure.ResponsibilitiesVersionFileEntry
 import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import cat.ohmushi.kolok.planning.domain.responsibilities.ResponsibilitiesCatalog
 import org.springframework.stereotype.Repository

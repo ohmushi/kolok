@@ -1,6 +1,6 @@
 package cat.ohmushi.kolok.planning.domain.planning
 
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import kotlin.collections.plus

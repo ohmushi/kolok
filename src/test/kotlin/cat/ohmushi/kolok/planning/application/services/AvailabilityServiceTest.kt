@@ -6,7 +6,7 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import cat.ohmushi.kolok.planning.domain.availabilities.AvailabilityCalendar
 import cat.ohmushi.kolok.planning.domain.events.AbsenceCancelled

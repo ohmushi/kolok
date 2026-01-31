@@ -4,7 +4,7 @@ import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.interaction.respondEphemeral

@@ -2,7 +2,7 @@ package cat.ohmushi.kolok.planning.adapters.`in`.rest
 
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningUseCase
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

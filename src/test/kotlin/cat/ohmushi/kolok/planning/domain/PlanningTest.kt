@@ -1,6 +1,7 @@
 package cat.ohmushi.kolok.planning.domain
 
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible

@@ -1,6 +1,6 @@
 package cat.ohmushi.kolok.planning.domain.availabilities
 
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 
 data class Absence(

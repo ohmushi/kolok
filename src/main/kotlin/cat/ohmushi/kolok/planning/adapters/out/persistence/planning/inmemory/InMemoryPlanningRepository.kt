@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.adapters.out.persistence.planning.inmemory
 
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
-import cat.ohmushi.kolok.planning.domain.Period
+import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import org.springframework.stereotype.Repository
 
