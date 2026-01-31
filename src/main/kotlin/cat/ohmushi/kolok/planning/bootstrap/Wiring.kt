@@ -74,7 +74,6 @@ class Wiring(
     fun availableResponsiblesPort(availabilityCalendarRepository: AvailabilityCalendarRepository, rosterProvider: FixedRosterProvider): AvailableResponsiblesPort =
         AvailableResponsiblesAdapter(
             repository = availabilityCalendarRepository,
-            rosterProvider = rosterProvider,
         )
 
     @Bean

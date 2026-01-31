@@ -1,16 +1,19 @@
 package cat.ohmushi.kolok.planning.adapters.out.events
 
 import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
+import cat.ohmushi.kolok.planning.adapters.infrastructure.User
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
-import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
+import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.events.EventHandler
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
+import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.entity.channel.MessageChannel
+import dev.kord.rest.builder.message.AllowedMentionsBuilder
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -111,8 +114,18 @@ data class PlanningGeneratedHandler(
         val msg = formatter.formatCompact(
             planning = planning,
             absents = absents,
-            users = discordUsers
+            allUsers = discordUsers
         )
-        channel.createMessage(msg)
+        channel.createMessage {
+            content = msg
+            allowedMentions = mentions(discordUsers.filter { it.responsible !in absents.map { it.name } })
+            suppressNotifications = false
+        }
+    }
+
+    private fun mentions(availables: List<User>): AllowedMentionsBuilder {
+        val builder = AllowedMentionsBuilder()
+        builder.users.addAll(availables.map { Snowflake(it.id) })
+        return builder
     }
 }

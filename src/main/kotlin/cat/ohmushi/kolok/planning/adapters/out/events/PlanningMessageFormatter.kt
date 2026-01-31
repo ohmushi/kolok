@@ -13,7 +13,7 @@ class PlanningMessageFormatter {
     private val dateFormatter =
         DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.FRENCH)
 
-    fun formatCompact(planning: Planning, absents: List<Responsible>, users: List<User>): String {
+    fun formatCompact(planning: Planning, absents: List<Responsible>, allUsers: List<User>): String {
         val sb = StringBuilder()
 
         sb.appendLine("🧹 **Planning ménage - semaine du ${planning.period.start.format(dateFormatter)}**")
@@ -26,7 +26,7 @@ class PlanningMessageFormatter {
         val maxNameLength = grouped.keys.maxOfOrNull { it.name.length } ?: 0
 
         grouped.forEach { (responsible, assignments) ->
-            val snowflake = users.find { it.responsible == responsible.name }?.id
+            val snowflake = allUsers.find { it.responsible == responsible.name }?.id
             val mention = if (snowflake != null) "<@$snowflake>" else "?"
             val paddedMention = mention.padEnd(maxNameLength)
             val tasks = assignments.joinToString(", ") { it.responsibility.name }
@@ -36,7 +36,7 @@ class PlanningMessageFormatter {
         if (absents.isNotEmpty()) {
             sb.appendLine()
             absents.sortedBy { it.name }.forEach { absent ->
-                sb.appendLine("🚫 ${absent.name} est absent cette semaine")
+                sb.appendLine("🚫 <@${allUsers.find { it.responsible == absent.name }?.id}> est absent cette semaine")
             }
         }
 
