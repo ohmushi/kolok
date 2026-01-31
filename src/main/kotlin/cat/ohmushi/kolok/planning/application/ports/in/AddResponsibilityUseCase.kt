@@ -3,11 +3,11 @@ package cat.ohmushi.kolok.planning.application.ports.`in`
 import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 
-interface RemoveResponsibilityFromUseCase {
-    fun removeResponsibility(command: RemoveResponsibilityFromCommand)
+interface AddResponsibilityUseCase {
+    fun addResponsibility(command: AddResponsibilityCommand)
 }
 
-data class RemoveResponsibilityFromCommand(
+data class AddResponsibilityCommand(
     val responsibility: Responsibility,
     val from: Period
 )

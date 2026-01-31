@@ -7,14 +7,14 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
-const val EVERY_SUNDAY_AT_6_PM = "0 0 18 * * SUN"
+private const val EVERY_SUNDAY_AT_6_PM = "0 0 18 * * SUN"
 
 @Component
 data class WeeklyPlanningScheduler(
     val generatePlanningUseCase: GeneratePlanningUseCase,
 ) {
 
-    @Scheduled(cron = EVERY_SUNDAY_AT_6_PM, zone = "Europe/Paris")
+    @Scheduled(cron = EVERY_SUNDAY_AT_6_PM)
     fun generateNextWeekPlanning() {
         val today = LocalDate.now()
         generatePlanningUseCase.generatePlanning(GeneratePlanningCommand(period = Period.firstAfter(today)))

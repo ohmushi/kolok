@@ -1,7 +1,6 @@
 package cat.ohmushi.kolok.planning.domain.responsibilities
 
 import cat.ohmushi.kolok.planning.domain.planning.Period
-import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 
 data class ResponsibilitiesVersion(
     val from: Period,
