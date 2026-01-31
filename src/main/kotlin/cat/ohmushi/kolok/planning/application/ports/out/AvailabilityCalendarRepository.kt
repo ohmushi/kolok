@@ -1,6 +1,6 @@
 package cat.ohmushi.kolok.planning.application.ports.out
 
-import cat.ohmushi.kolok.planning.domain.availability.AvailabilityCalendar
+import cat.ohmushi.kolok.planning.domain.availabilities.AvailabilityCalendar
 
 interface AvailabilityCalendarRepository {
     fun get(): AvailabilityCalendar

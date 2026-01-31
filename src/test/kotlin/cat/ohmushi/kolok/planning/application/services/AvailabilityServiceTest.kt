@@ -8,7 +8,7 @@ import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Responsible
-import cat.ohmushi.kolok.planning.domain.availability.AvailabilityCalendar
+import cat.ohmushi.kolok.planning.domain.availabilities.AvailabilityCalendar
 import cat.ohmushi.kolok.planning.domain.events.AbsenceCancelled
 import cat.ohmushi.kolok.planning.domain.events.AbsenceRecorded
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent

@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.domain.availability
+package cat.ohmushi.kolok.planning.domain.availabilities
 
 import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.Responsible
