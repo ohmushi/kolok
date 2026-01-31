@@ -11,7 +11,7 @@ import cat.ohmushi.kolok.planning.domain.Period
 import cat.ohmushi.kolok.planning.domain.planning.Planning
 import cat.ohmushi.kolok.planning.domain.planning.PlanningFactory
 import cat.ohmushi.kolok.planning.domain.events.PlanningGenerated
-import cat.ohmushi.kolok.planning.domain.Responsibility
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import cat.ohmushi.kolok.planning.domain.Responsible
 import cat.ohmushi.kolok.planning.domain.rotation.RotationDraft
 import cat.ohmushi.kolok.planning.domain.rotation.RotationPolicy

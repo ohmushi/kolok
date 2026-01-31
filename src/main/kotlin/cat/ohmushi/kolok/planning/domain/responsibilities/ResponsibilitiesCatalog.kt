@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.domain.responsibilities
 
 import cat.ohmushi.kolok.planning.domain.Period
-import cat.ohmushi.kolok.planning.domain.Responsibility
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.events.ResponsibilitiesDefined
 import cat.ohmushi.kolok.planning.domain.events.ResponsibilityAddedFrom
