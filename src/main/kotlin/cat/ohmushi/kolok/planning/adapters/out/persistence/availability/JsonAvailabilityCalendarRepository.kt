@@ -44,7 +44,7 @@ class JsonAvailabilityCalendarRepository(
             AbsenceFileEntry(
                 responsible = absence.responsible.name,
                 from = absence.from.start.toString(),
-                periodsCount = (absence.from..absence.to).size,
+                periodsCount = absence.periodsCount,
             )
         }
 

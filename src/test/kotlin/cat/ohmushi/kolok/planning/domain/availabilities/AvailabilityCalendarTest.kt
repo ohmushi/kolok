@@ -88,7 +88,7 @@ class AvailabilityCalendarTest {
 
         val again = afterFirstClean.recordAbsence(theo, p1, periodsCount = 2)
 
-        assertThat(again.snapshotAbsences()).containsExactly(Absence(theo, p1, p2))
+        assertThat(again.snapshotAbsences()).containsExactly(Absence(theo, p1, periodsCount = 2))
 
         val (_, eventsAfterSecond) = again.consumeEvents()
         assertThat(eventsAfterSecond).isEmpty()
@@ -136,7 +136,7 @@ class AvailabilityCalendarTest {
 
         val absences = calendar.snapshotAbsences()
 
-        assertThat(absences).containsExactly(Absence(theo, p1, p2))
+        assertThat(absences).containsExactly(Absence(theo, p1, periodsCount = 2))
     }
 
     @Test
@@ -161,6 +161,6 @@ class AvailabilityCalendarTest {
 
         val updated = calendar.recordAbsence(theo, p1.next(), periodsCount = 1)
 
-        assertThat(updated.snapshotAbsences()).containsExactly(Absence(theo, p1, p2))
+        assertThat(updated.snapshotAbsences()).containsExactly(Absence(theo, p1, periodsCount = 2))
     }
 }
