@@ -13,6 +13,7 @@ import dev.kord.core.entity.interaction.ChatInputCommandInteraction
 import dev.kord.rest.builder.interaction.ChatInputCreateBuilder
 import dev.kord.rest.builder.interaction.integer
 import dev.kord.rest.builder.interaction.string
+import dev.kord.rest.builder.interaction.user
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -29,23 +30,23 @@ class AbsenceDiscordCommand(
     override fun build(): ChatInputCreateBuilder.() -> Unit = {
         // TODO group into SubCommands
         // TODO commande peut ouvrir une modal
-        // TODO add absent user option
         string("start", "Début (YYYY-MM-DD, doit être un lundi)") {
             required = true
             autocomplete = true
         }
         integer("count", "Nombre de semaines d'absence, défaut=1") { required = false }
+        user("absent", "Colocataire absent") { required = false }
     }
 
     override suspend fun handle(interaction: ChatInputCommandInteraction) {
         require(interaction.command.rootName == "absence") { "Invalid command for AbsenceCommandHandler" }
 
-        val absent = interaction.user.id.toString()
+        val absent = interaction.command.users["absent"] ?: interaction.user
         val fromStr = interaction.command.strings["start"]?.trim().orEmpty()
         val periodsCount = interaction.command.integers["count"]?.toInt() ?: 1
 
         try {
-            val responsible = identityLinks.findResponsibleIdByUserId(userId = absent)
+            val responsible = identityLinks.findResponsibleIdByUserId(userId = absent.id.toString())
             if (responsible == null) {
                 interaction.respondEphemeral {
                     content = "Aucun Responsable trouvé pour user=${absent}."
