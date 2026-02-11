@@ -27,7 +27,7 @@ class AvailabilityServiceTest {
     private val theo = Responsible("Theo")
     private val charles = Responsible("Charles")
 
-    open class Base(private val roster: Set<Responsible>) {
+    open class Base(roster: Set<Responsible>) {
         protected val repo = InMemoryAvailabilityCalendarRepository(roster)
         protected val publisher = CapturingEventsPublisher()
         protected val service = AvailabilityService(repo, publisher)
