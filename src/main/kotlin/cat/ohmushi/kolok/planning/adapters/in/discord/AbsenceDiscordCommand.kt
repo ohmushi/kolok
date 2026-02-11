@@ -29,7 +29,7 @@ class AbsenceDiscordCommand(
     }
 
     override suspend fun handle(interaction: ChatInputCommandInteraction) {
-        require(interaction.command.rootName == "absence") { "Invalid command for AbscenceCommandHandler" }
+        require(interaction.command.rootName == "absence") { "Invalid command for AbsenceCommandHandler" }
 
         val absent = interaction.user.id.toString()
         val fromStr = interaction.command.strings["start"]?.trim().orEmpty()

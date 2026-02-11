@@ -30,11 +30,13 @@ class AvailabilityCalendar private constructor(
         require(responsible in roster)
         require(periodsCount >= 1) { "periodsCount must be >= 1" }
 
-        val toIncluded = from.plus((periodsCount - 1).toLong())
-        val absence = Absence(responsible, from, toIncluded)
-        if (absences.any { it == absence }) return this
+        val requested = absenceRequested(responsible, from, periodsCount)
 
-        val nextAbsences = absences + absence
+        if (absences.any { it.responsible == responsible && it.overlaps(requested) }) {
+            return this
+        }
+
+        val nextAbsences = absences + requested
         val event = AbsenceRecorded(responsible = responsible, from = from, periodsCount = periodsCount)
 
         return AvailabilityCalendar(
@@ -50,8 +52,8 @@ class AvailabilityCalendar private constructor(
 
         // TODO not taking the periodCount, infer it from existing absences
 
-        val toIncluded = from.plus((periodsCount - 1).toLong())
-        val target = Absence(responsible, from, toIncluded)
+        val to = from.plus((periodsCount - 1).toLong())
+        val target = Absence(responsible, from, to)
         require(absences.any { it == target })
 
         val nextAbsences = absences.filterNot { it == target }
@@ -75,5 +77,10 @@ class AvailabilityCalendar private constructor(
             .filter { it.covers(period) }
             .map { it.responsible }
             .sortedBy { it.name }
+    }
+
+    private fun absenceRequested(responsible: Responsible, from: Period, periodsCount: Int): Absence {
+        val to = from.plus((periodsCount - 1).toLong())
+        return Absence(responsible, from, to)
     }
 }
