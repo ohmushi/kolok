@@ -30,20 +30,19 @@ class CancelAbsenceDiscordCommand(
     private val logger = KotlinLogging.logger {}
 
     override fun build(): ChatInputCreateBuilder.() -> Unit = {
-        user("absent", "Colocataire absent") {
-            required = true
-        }
         string("start", "Début (YYYY-MM-DD, doit être un lundi)") {
             required = true
             autocomplete = true
         }
+        user("absent", "Colocataire absent") {
+            required = false
+        }
     }
 
     override suspend fun handle(interaction: ChatInputCommandInteraction) {
-        // TODO autoComplession avec Autocomplete => chercher en db toute les dates et les proposer
         require(interaction.command.rootName == "cancel-absence") { "Invalid command for CancelAbsenceCommand" }
 
-        val absent = interaction.command.users["absent"] ?: error("User option 'absent' is required")
+        val absent = interaction.command.users["absent"] ?: interaction.user
         val fromStr = interaction.command.strings["start"]?.trim().orEmpty()
 
         try {
@@ -65,8 +64,7 @@ class CancelAbsenceDiscordCommand(
             )
 
             interaction.respondEphemeral {
-                content =
-                    "Absence retirée pour ${responsible.name} à partir du ${from.start}."
+                content = "Absence retirée pour ${responsible.name} à partir du ${from.start}."
             }
         } catch (e: IllegalArgumentException) {
             interaction.respondEphemeral { content = "Entrée invalide: ${e.message}" }
@@ -82,12 +80,9 @@ class CancelAbsenceDiscordCommand(
     }
 
     override suspend fun handle(interaction: AutoCompleteInteraction) {
-        val absent = interaction.command.options["absent"]?.value as Snowflake?
+        require(interaction.command.rootName == "cancel-absence") { "Invalid command for CancelAbsenceCommand" }
 
-        if (absent == null) {
-            interaction.suggest(emptyList())
-            return
-        }
+        val absent = interaction.command.options["absent"]?.value as Snowflake? ?: interaction.user.id
 
         val responsible = identityLinks.findResponsibleIdByUserId(userId = absent.toString())
         if(responsible == null) {
@@ -106,8 +101,8 @@ class CancelAbsenceDiscordCommand(
         interaction.suggest(absences.map {
             Choice.StringChoice(
                 name = it,
-                nameLocalizations = Optional.Value(emptyMap()),
-                value = it
+                value = it,
+                nameLocalizations = Optional.Missing(),
             )
         })
     }

@@ -4,7 +4,11 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.domain.planning.Period
+import dev.kord.common.entity.Choice
+import dev.kord.common.entity.optional.Optional
 import dev.kord.core.behavior.interaction.respondEphemeral
+import dev.kord.core.behavior.interaction.suggest
+import dev.kord.core.entity.interaction.AutoCompleteInteraction
 import dev.kord.core.entity.interaction.ChatInputCommandInteraction
 import dev.kord.rest.builder.interaction.ChatInputCreateBuilder
 import dev.kord.rest.builder.interaction.integer
@@ -12,6 +16,7 @@ import dev.kord.rest.builder.interaction.string
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Component
 class AbsenceDiscordCommand(
@@ -24,7 +29,11 @@ class AbsenceDiscordCommand(
     override fun build(): ChatInputCreateBuilder.() -> Unit = {
         // TODO group into SubCommands
         // TODO commande peut ouvrir une modal
-        string("start", "Début (YYYY-MM-DD, doit être un lundi)") { required = true }
+        // TODO add absent user option
+        string("start", "Début (YYYY-MM-DD, doit être un lundi)") {
+            required = true
+            autocomplete = true
+        }
         integer("count", "Nombre de semaines d'absence, défaut=1") { required = false }
     }
 
@@ -71,4 +80,19 @@ class AbsenceDiscordCommand(
         return Period(parsed)
     }
 
+    override suspend fun handle(interaction: AutoCompleteInteraction) {
+        require(interaction.command.rootName == "absence") { "Invalid command for AbsenceDiscordCommand" }
+
+        val choices = (0..5).map {
+            val nextPeriod =
+                Period.firstAfter(LocalDate.now()).plus(it.toLong()).start.format(DateTimeFormatter.ISO_LOCAL_DATE)
+            Choice.StringChoice(
+                nextPeriod,
+                value = nextPeriod,
+                nameLocalizations = Optional.Missing(),
+            )
+        }
+
+        interaction.suggest(choices)
+    }
 }
