@@ -147,4 +147,63 @@ class AvailabilityCalendarTest {
 
         assertThat(updated.snapshotAbsences()).containsExactly(Absence(theo, p1, periodsCount = 2))
     }
+
+    @Test
+    fun absencesOfResponsibleSince_shouldFail_whenResponsibleNotInRoster() {
+        val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
+            .recordAbsence(theo, p1, periodsCount = 2)
+
+        assertThatThrownBy { calendar.absencesOfResponsibleSince(charles, p0) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun absencesOfResponsibleSince_shouldReturnOnlyResponsibleAbsences_sincePeriod_inclusive_sorted() {
+        val calendar = AvailabilityCalendar.create(setOf(fabio, theo, charles))
+            .recordAbsence(theo, p2, periodsCount = 1)
+            .recordAbsence(theo, p1, periodsCount = 2)
+            .recordAbsence(charles, p3, periodsCount = 1)
+
+        val result = calendar.absencesOfResponsibleSince(theo, p2)
+
+        assertThat(result).containsExactly(
+            Absence(theo, p2, periodsCount = 1)
+        )
+    }
+
+    @Test
+    fun absencesOfResponsibleSince_shouldIncludeAbsenceStartingExactlyAtFirstAfter() {
+        val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
+            .recordAbsence(theo, p2, periodsCount = 2)
+
+        val result = calendar.absencesOfResponsibleSince(theo, p2)
+
+        assertThat(result).containsExactly(Absence(theo, p2, periodsCount = 2))
+    }
+
+    @Test
+    fun absencesOfResponsibleSince_shouldReturnEmpty_whenNoAbsencesAfterPeriod() {
+        val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
+            .recordAbsence(theo, p1, periodsCount = 1)
+
+        val result = calendar.absencesOfResponsibleSince(theo, p3)
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun absencesOfResponsibleSince_shouldBeSortedByFromAscending() {
+        val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
+            .recordAbsence(theo, p3, periodsCount = 1)
+            .recordAbsence(theo, p1, periodsCount = 1)
+            .recordAbsence(theo, p2, periodsCount = 1)
+
+        val result = calendar.absencesOfResponsibleSince(theo, p0)
+
+        assertThat(result).containsExactly(
+            Absence(theo, p1, periodsCount = 1),
+            Absence(theo, p2, periodsCount = 1),
+            Absence(theo, p3, periodsCount = 1),
+        )
+    }
 }

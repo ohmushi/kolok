@@ -3,7 +3,9 @@ package cat.ohmushi.kolok.planning.adapters.`in`.discord
 import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
+import dev.kord.core.entity.interaction.AutoCompleteInteraction
 import dev.kord.core.entity.interaction.ChatInputCommandInteraction
+import dev.kord.core.event.interaction.AutoCompleteInteractionCreateEvent
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
 import dev.kord.rest.builder.interaction.ChatInputCreateBuilder
@@ -45,7 +47,7 @@ class DiscordSlashCommandsAdapter(
 
     private suspend fun registerCommands(kord: Kord) {
         val gid = Snowflake(requireNotNull(guildId) { "Discord guild ID must be set to register slash commands" })
-        handlers.forEach { commandName, command ->
+        handlers.forEach { (commandName, command) ->
             scope.launch {
                 // TODO go to global
                 kord.createGuildChatInputCommand(gid, commandName, commandName, command.build())
@@ -60,10 +62,19 @@ class DiscordSlashCommandsAdapter(
                 { "No handler for command ${interaction.command.rootName}" }
                 .handle(interaction)
         }
+
+        kord.on<AutoCompleteInteractionCreateEvent> {
+            val handler = handlers[interaction.command.rootName]
+            requireNotNull(handler)
+            { "No handler for command ${interaction.command.rootName}" }.handle(interaction)
+        }
     }
 }
 
 interface CommandHandler {
     suspend fun handle(interaction: ChatInputCommandInteraction)
+    suspend fun handle(interaction: AutoCompleteInteraction) {
+        // default no-op
+    }
     fun build(): ChatInputCreateBuilder.() -> Unit
 }

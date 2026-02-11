@@ -75,4 +75,15 @@ class AvailabilityCalendar private constructor(
             .sortedBy { it.name }
     }
 
+    fun absencesOfResponsibleSince(responsible: Responsible, since: Period): List<Absence> {
+        require(responsible in roster)
+
+        return absences
+            .asSequence()
+            .filter { it.responsible == responsible }
+            .filter { !it.from.start.isBefore(since.start) }
+            .sortedBy { it.from.start }
+            .toList()
+    }
+
 }
