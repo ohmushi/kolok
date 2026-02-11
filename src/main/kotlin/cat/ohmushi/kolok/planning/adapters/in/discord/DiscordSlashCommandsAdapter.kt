@@ -7,8 +7,6 @@ import dev.kord.core.entity.interaction.ChatInputCommandInteraction
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
 import dev.kord.rest.builder.interaction.ChatInputCreateBuilder
-import dev.kord.rest.builder.interaction.integer
-import dev.kord.rest.builder.interaction.string
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,14 +20,16 @@ import org.springframework.stereotype.Component
 @Component
 class DiscordSlashCommandsAdapter(
     private val discordConnexion: DiscordConnexion,
-    private val absenceCommand: AbsenceCommand,
+    absenceDiscordCommand: AbsenceDiscordCommand,
+    cancelAbsenceDiscordCommand: CancelAbsenceDiscordCommand,
     @Value("\${discord.guild-id:}") private val guildId: String? = null,
 ) {
     private val logger = KotlinLogging.logger {}
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    private val handlers: Map<String, CommandHandler>  = mapOf(
-        "absence" to absenceCommand,
+    private val handlers: Map<String, CommandHandler> = mapOf(
+        "absence" to absenceDiscordCommand,
+        "cancel-absence" to cancelAbsenceDiscordCommand,
     )
 
     @EventListener(ApplicationReadyEvent::class)
@@ -48,7 +48,7 @@ class DiscordSlashCommandsAdapter(
         handlers.forEach { commandName, command ->
             scope.launch {
                 // TODO go to global
-                kord.createGuildChatInputCommand(gid, commandName, "Enregistre une absence", command.build())
+                kord.createGuildChatInputCommand(gid, commandName, commandName, command.build())
             }
         }
     }

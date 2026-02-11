@@ -153,4 +153,14 @@ class AvailabilityCalendarTest {
 
         assertThat(clean.consumeEvents().second).isEmpty()
     }
+
+    @Test
+    fun recordAbsenceOnAlreadyExistingAbsence_shouldNotDuplicateAbsence() {
+        val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
+            .recordAbsence(theo, p1, periodsCount = 2)
+
+        val updated = calendar.recordAbsence(theo, p1.next(), periodsCount = 1)
+
+        assertThat(updated.snapshotAbsences()).containsExactly(Absence(theo, p1, p2))
+    }
 }

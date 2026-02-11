@@ -14,11 +14,19 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
-class AbsenceCommand(
+class AbsenceDiscordCommand(
     val identityLinks: UserIdentityLinkRepository,
     private val recordAbsence: RecordAbsenceUseCase,
 ) : CommandHandler {
     private val logger = KotlinLogging.logger {}
+
+
+    override fun build(): ChatInputCreateBuilder.() -> Unit = {
+        // TODO group into SubCommands
+        // TODO commande peut ouvrir une modal
+        string("start", "Début (YYYY-MM-DD, doit être un lundi)") { required = true }
+        integer("count", "Nombre de semaines d'absence, défaut=1") { required = false }
+    }
 
     override suspend fun handle(interaction: ChatInputCommandInteraction) {
         require(interaction.command.rootName == "absence") { "Invalid command for AbscenceCommandHandler" }
@@ -61,11 +69,6 @@ class AbsenceCommand(
     private fun parsePeriod(date: String): Period {
         val parsed = LocalDate.parse(date)
         return Period(parsed)
-    }
-
-    override fun build(): ChatInputCreateBuilder.() -> Unit = {
-        string("start", "Début (YYYY-MM-DD, doit être un lundi)") { required = true }
-        integer("count", "Nombre de semaines d'absence, défaut=1") { required = false }
     }
 
 }

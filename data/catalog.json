@@ -1,8 +1,8 @@
 {
   "absences" : [ {
-    "responsible" : "Charles",
+    "responsible" : "Theo",
     "from" : "2026-02-02",
-    "periodsCount" : 1
+    "periodsCount" : 2
   } ],
   "responsibilityVersions" : [ {
     "from" : "2026-01-05",

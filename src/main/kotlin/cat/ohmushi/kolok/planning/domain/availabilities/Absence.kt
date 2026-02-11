@@ -6,7 +6,7 @@ import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 data class Absence(
     val responsible: Responsible,
     val from: Period,
-    val to: Period
+    val to: Period // TODO replace by periodCount
 ) {
     init {
         require(!responsible.name.isBlank())

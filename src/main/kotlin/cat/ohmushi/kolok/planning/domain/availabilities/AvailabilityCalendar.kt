@@ -48,6 +48,8 @@ class AvailabilityCalendar private constructor(
         require(responsible in roster)
         require(periodsCount >= 1) { "periodsCount must be >= 1" }
 
+        // TODO not taking the periodCount, infer it from existing absences
+
         val toIncluded = from.plus((periodsCount - 1).toLong())
         val target = Absence(responsible, from, toIncluded)
         require(absences.any { it == target })
