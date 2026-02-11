@@ -6,9 +6,4 @@ import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 data class AbsenceCancelled(
     val responsible: Responsible,
     val from: Period,
-    val periodsCount: Int,
-) : DomainEvent {
-    init {
-        require(periodsCount >= 1) { "periodsCount must be >= 1" }
-    }
-}
+) : DomainEvent

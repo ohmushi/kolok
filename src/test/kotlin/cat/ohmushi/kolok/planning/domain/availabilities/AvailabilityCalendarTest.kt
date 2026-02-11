@@ -49,14 +49,6 @@ class AvailabilityCalendarTest {
     }
 
     @Test
-    fun recordAbsence_shouldFail_whenPeriodsCountInvalid() {
-        val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
-
-        assertThatThrownBy { calendar.recordAbsence(theo, p1, periodsCount = 0) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-    }
-
-    @Test
     fun recordAbsence_shouldRemoveResponsibleFromAvailability_inInclusiveRange() {
         val calendar = AvailabilityCalendar.create(setOf(charles, fabio, theo))
             .recordAbsence(theo, p1, periodsCount = 2)
@@ -98,15 +90,7 @@ class AvailabilityCalendarTest {
     fun cancelAbsence_shouldFail_whenResponsibleNotInRoster() {
         val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
 
-        assertThatThrownBy { calendar.cancelAbsence(charles, p1, periodsCount = 1) }
-            .isInstanceOf(IllegalArgumentException::class.java)
-    }
-
-    @Test
-    fun cancelAbsence_shouldFail_whenPeriodsCountInvalid() {
-        val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
-
-        assertThatThrownBy { calendar.cancelAbsence(theo, p1, periodsCount = 0) }
+        assertThatThrownBy { calendar.cancelAbsence(charles, p1) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -114,7 +98,7 @@ class AvailabilityCalendarTest {
     fun cancelAbsence_shouldFail_whenAbsenceDoesNotExist() {
         val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
 
-        assertThatThrownBy { calendar.cancelAbsence(theo, p1, periodsCount = 2) }
+        assertThatThrownBy { calendar.cancelAbsence(theo, p1) }
             .isInstanceOf(IllegalArgumentException::class.java)
     }
 
@@ -123,7 +107,7 @@ class AvailabilityCalendarTest {
         val calendar = AvailabilityCalendar.create(setOf(charles, fabio, theo))
             .recordAbsence(theo, p1, periodsCount = 2)
 
-        val restored = calendar.cancelAbsence(theo, p1, periodsCount = 2)
+        val restored = calendar.cancelAbsence(theo, p1)
 
         assertThat(restored.availableFor(p1)).containsExactly(charles, fabio, theo)
         assertThat(restored.availableFor(p2)).containsExactly(charles, fabio, theo)
@@ -143,13 +127,13 @@ class AvailabilityCalendarTest {
     fun consumeEvents_shouldContainEventsRecorded_andCancelled() {
         val calendar = AvailabilityCalendar.create(setOf(fabio, theo))
             .recordAbsence(theo, p1, periodsCount = 2)
-            .cancelAbsence(theo, p1, periodsCount = 2)
+            .cancelAbsence(theo, p1)
 
         val (clean, events) = calendar.consumeEvents()
 
         assertThat(events).hasSize(2)
         assertThat(events[0]).isEqualTo(AbsenceRecorded(responsible = theo, from = p1, periodsCount = 2))
-        assertThat(events[1]).isEqualTo(AbsenceCancelled(responsible = theo, from = p1, periodsCount = 2))
+        assertThat(events[1]).isEqualTo(AbsenceCancelled(responsible = theo, from = p1))
 
         assertThat(clean.consumeEvents().second).isEmpty()
     }

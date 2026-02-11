@@ -46,15 +46,14 @@ class AvailabilityCalendar private constructor(
         )
     }
 
-    fun cancelAbsence(responsible: Responsible, from: Period, periodsCount: Int = 1): AvailabilityCalendar {
+    fun cancelAbsence(responsible: Responsible, from: Period): AvailabilityCalendar {
         require(responsible in roster)
-        require(periodsCount >= 1) { "periodsCount must be >= 1" }
 
-        val target = Absence(responsible, from, periodsCount)
-        require(absences.any { it == target })
+        val target = absences.firstOrNull { it.responsible == responsible && it.from == from }
+        require(target != null)
 
-        val nextAbsences = absences.filterNot { it == target }
-        val event = AbsenceCancelled(responsible = responsible, from = from, periodsCount = periodsCount)
+        val nextAbsences = absences - target
+        val event = AbsenceCancelled(responsible = responsible, from = from)
 
         return AvailabilityCalendar(
             roster = roster,

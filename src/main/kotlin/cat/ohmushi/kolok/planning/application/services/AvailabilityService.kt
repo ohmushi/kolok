@@ -35,7 +35,6 @@ data class AvailabilityService(
         val updated = availabilityCalendar.cancelAbsence(
             responsible = command.responsible,
             from = command.from,
-            periodsCount = command.periodsCount
         )
 
         val (clean, events) = updated.consumeEvents()

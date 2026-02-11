@@ -10,9 +10,4 @@ interface CancelAbsenceUseCase {
 data class CancelAbsenceCommand(
     val responsible: Responsible,
     val from: Period,
-    val periodsCount: Int = 1,
-) {
-    init {
-        require(periodsCount >= 1) { "periodsCount must be >= 1" }
-    }
-}
+)

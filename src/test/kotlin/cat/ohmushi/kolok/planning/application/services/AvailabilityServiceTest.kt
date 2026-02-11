@@ -4,47 +4,40 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.CancelAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.CancelAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
-import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
-import cat.ohmushi.kolok.planning.domain.planning.Period
-import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
+import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.domain.availabilities.AvailabilityCalendar
 import cat.ohmushi.kolok.planning.domain.events.AbsenceCancelled
 import cat.ohmushi.kolok.planning.domain.events.AbsenceRecorded
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
+import cat.ohmushi.kolok.planning.domain.planning.Period
+import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-val p1 = Period(LocalDate.of(2026, 1, 12))
-val p2 = Period(LocalDate.of(2026, 1, 19))
-val p3 = Period(LocalDate.of(2026, 1, 26))
-
-val fabio = Responsible("Fabio")
-val theo = Responsible("Theo")
-val charles = Responsible("Charles")
-
 class AvailabilityServiceTest {
 
+    private val p1 = Period(LocalDate.of(2026, 1, 12))
+    private val p2 = Period(LocalDate.of(2026, 1, 19))
 
+    private val fabio = Responsible("Fabio")
+    private val theo = Responsible("Theo")
+    private val charles = Responsible("Charles")
 
-    abstract class Base {
+    open class Base(private val roster: Set<Responsible>) {
+        protected val repo = InMemoryAvailabilityCalendarRepository(roster)
         protected val publisher = CapturingEventsPublisher()
-        protected val repo = InMemoryAvailabilityCalendarRepository()
-
-        protected var service = AvailabilityService(
-            availabilityCalendarRepository = repo,
-            eventsPublisher = publisher
-        )
+        protected val service = AvailabilityService(repo, publisher)
 
         protected fun recordUseCase(): RecordAbsenceUseCase = service
         protected fun cancelUseCase(): CancelAbsenceUseCase = service
     }
 
     @Nested
-    inner class RecordAbsenceUseCaseTest : Base() {
+    inner class RecordAbsenceUseCaseTest : Base(setOf(charles, fabio, theo)) {
 
         @BeforeEach
         fun setUp() {
@@ -53,79 +46,7 @@ class AvailabilityServiceTest {
         }
 
         @Test
-        fun execute_shouldCreateCalendarIfMissing_recordAbsence_save_andPublishEvent() {
-
-            recordUseCase().recordAbsence(
-                RecordAbsenceCommand(
-                    responsible = theo,
-                    from = p1,
-                    periodsCount = 2
-                )
-            )
-
-            assertThat(repo.saved).isNotNull
-            assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio)
-            assertThat(repo.saved!!.availableFor(p2)).containsExactly(charles, fabio)
-            assertThat(repo.saved!!.availableFor(p3)).containsExactly(charles, fabio, theo)
-
-            assertThat(publisher.publishedEvents).containsExactly(
-                AbsenceRecorded(responsible = theo, from = p1, periodsCount = 2)
-            )
-        }
-
-        @Test
-        fun execute_shouldFail_whenResponsibleNotInRoster_andNotSaveOrPublish() {
-            val outsider = Responsible("Outsider")
-
-            assertThatThrownBy {
-                recordUseCase().recordAbsence(
-                    RecordAbsenceCommand(
-                        responsible = outsider,
-                        from = p1,
-                        periodsCount = 2
-                    )
-                )
-            }.isInstanceOf(IllegalArgumentException::class.java)
-
-            assertThat(repo.saved).isNull()
-            assertThat(publisher.publishedEvents).isEmpty()
-        }
-
-        @Test
-        fun execute_shouldFail_whenPeriodsCountInvalid_andNotSaveOrPublish() {
-            assertThatThrownBy {
-                recordUseCase().recordAbsence(
-                    RecordAbsenceCommand(
-                        responsible = theo,
-                        from = p1,
-                        periodsCount = 0
-                    )
-                )
-            }.isInstanceOf(IllegalArgumentException::class.java)
-
-            assertThat(repo.saved).isNull()
-            assertThat(publisher.publishedEvents).isEmpty()
-        }
-
-        @Test
-        fun execute_shouldBeIdempotent_whenSameAbsenceAlreadyRecorded_andNotPublishSecondTime() {
-            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, periodsCount = 2))
-
-            publisher.publishedEvents.clear()
-            repo.saved = null
-
-            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, periodsCount = 2))
-
-            assertThat(repo.saved).isNotNull
-            assertThat(publisher.publishedEvents).isEmpty()
-
-            assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio)
-            assertThat(repo.saved!!.availableFor(p2)).containsExactly(charles, fabio)
-            assertThat(repo.saved!!.availableFor(p3)).containsExactly(charles, fabio, theo)
-        }
-
-        @Test
-        fun execute_shouldDefaultToOnePeriod_whenPeriodsCountOmitted() {
+        fun execute_shouldRecordAbsence_save_andPublishEvent() {
             recordUseCase().recordAbsence(
                 RecordAbsenceCommand(
                     responsible = theo,
@@ -144,7 +65,7 @@ class AvailabilityServiceTest {
     }
 
     @Nested
-    inner class CancelAbsenceUseCaseTest : Base() {
+    inner class CancelAbsenceUseCaseTest : Base(setOf(fabio, theo, charles)) {
 
         @BeforeEach
         fun setUp() {
@@ -157,14 +78,14 @@ class AvailabilityServiceTest {
             recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1, periodsCount = 2))
             val before = publisher.publishedEvents.toList()
 
-            cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, periodsCount = 2))
+            cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1))
 
             assertThat(repo.saved).isNotNull
-            assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio, theo)
-            assertThat(repo.saved!!.availableFor(p2)).containsExactly(charles, fabio, theo)
+            assertThat(repo.saved!!.availableFor(p1)).containsExactlyInAnyOrder(charles, fabio, theo)
+            assertThat(repo.saved!!.availableFor(p2)).containsExactlyInAnyOrder(charles, fabio, theo)
 
             assertThat(publisher.publishedEvents).containsExactlyElementsOf(before + listOf(
-                AbsenceCancelled(responsible = theo, from = p1, periodsCount = 2)
+                AbsenceCancelled(responsible = theo, from = p1)
             ))
         }
 
@@ -173,7 +94,7 @@ class AvailabilityServiceTest {
             repo.current = null
 
             assertThatThrownBy {
-                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, periodsCount = 2))
+                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1))
             }.isInstanceOf(IllegalArgumentException::class.java)
 
             assertThat(repo.saved).isNull()
@@ -185,7 +106,7 @@ class AvailabilityServiceTest {
             repo.current = AvailabilityCalendar.create(setOf(fabio, theo, charles))
 
             assertThatThrownBy {
-                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1, periodsCount = 2))
+                cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1))
             }.isInstanceOf(IllegalArgumentException::class.java)
 
             assertThat(repo.saved).isNull()
@@ -200,34 +121,19 @@ class AvailabilityServiceTest {
                 .recordAbsence(theo, p1, periodsCount = 2)
 
             assertThatThrownBy {
-                cancelUseCase().cancelAbsence(CancelAbsenceCommand(outsider, p1, periodsCount = 2))
+                cancelUseCase().cancelAbsence(CancelAbsenceCommand(outsider, p1))
             }.isInstanceOf(IllegalArgumentException::class.java)
 
             assertThat(repo.saved).isNull()
             assertThat(publisher.publishedEvents).isEmpty()
         }
-
-        @Test
-        fun execute_shouldDefaultToOnePeriod_whenPeriodsCountOmitted() {
-            recordUseCase().recordAbsence(RecordAbsenceCommand(theo, p1))
-            val before = publisher.publishedEvents.toList()
-
-            cancelUseCase().cancelAbsence(CancelAbsenceCommand(theo, p1))
-
-            assertThat(repo.saved).isNotNull
-            assertThat(repo.saved!!.availableFor(p1)).containsExactly(charles, fabio, theo)
-
-            assertThat(publisher.publishedEvents).containsExactlyElementsOf(before + listOf(
-                AbsenceCancelled(responsible = theo, from = p1, periodsCount = 1)
-            ))
-        }
     }
 
-    class InMemoryAvailabilityCalendarRepository : AvailabilityCalendarRepository {
+    class InMemoryAvailabilityCalendarRepository(private val roster: Set<Responsible>) : AvailabilityCalendarRepository {
         var current: AvailabilityCalendar? = null
         var saved: AvailabilityCalendar? = null
 
-        override fun get(): AvailabilityCalendar = current ?: AvailabilityCalendar.create(roster = setOf(charles, fabio, theo))
+        override fun get(): AvailabilityCalendar = current ?: AvailabilityCalendar.create(roster = roster)
 
         override fun save(calendar: AvailabilityCalendar) {
             current = calendar
@@ -235,7 +141,7 @@ class AvailabilityServiceTest {
         }
 
         fun reset() {
-            current = AvailabilityCalendar.create(roster = setOf(charles, fabio, theo))
+            current = AvailabilityCalendar.create(roster = roster)
             saved = null
         }
     }

@@ -45,7 +45,6 @@ class CancelAbsenceDiscordCommand(
                 CancelAbsenceCommand(
                     responsible = responsible,
                     from = from,
-                    periodsCount = 1, // TODO remove periodsCount to cancel an absence only from the from
                 )
             )
 
@@ -56,8 +55,8 @@ class CancelAbsenceDiscordCommand(
         } catch (e: IllegalArgumentException) {
             interaction.respondEphemeral { content = "Entrée invalide: ${e.message}" }
         } catch (t: Throwable) {
-            logger.error(t) { "Failed to record absence" }
-            interaction.respondEphemeral { content = "Erreur interne lors de l'enregistrement." }
+            logger.error(t) { "Failed to cancel absence" }
+            interaction.respondEphemeral { content = "Erreur interne lors de l'annulation." }
         }
     }
 
