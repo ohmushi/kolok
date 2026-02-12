@@ -6,6 +6,10 @@
 
 Le projet est conçu comme un backend unique (pas de front), déployable facilement en **Docker**. Les données (catalogue, plannings) sont persistées en **JSON** dans un dossier `data/`.
 
+## A Voir
+
+https://ktor.io/
+
 ## Fonctionnalités
 - Génération de planning à partir :
   - d’un catalogue de responsabilités
