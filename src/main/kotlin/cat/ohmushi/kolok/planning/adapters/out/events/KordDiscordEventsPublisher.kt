@@ -1,6 +1,6 @@
 package cat.ohmushi.kolok.planning.adapters.out.events
 
-import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
+import cat.ohmushi.kolok.planning.adapters.infrastructure.KordDiscordConnexion
 import cat.ohmushi.kolok.planning.adapters.infrastructure.User
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
@@ -26,8 +26,8 @@ import org.springframework.stereotype.Component
 import kotlin.reflect.KClass
 
 @Component
-class DiscordEventsPublisher(
-    private val discordConnexion: DiscordConnexion,
+class KordDiscordEventsPublisher(
+    private val kordDiscordConnexion: KordDiscordConnexion,
     @Value("\${discord.planning.channel}") private val channelId: String,
     private val plannings: PlanningRepository,
     private val availabilities: AvailabilityCalendarRepository,
@@ -63,7 +63,7 @@ class DiscordEventsPublisher(
     fun warmupKordAndChannel() {
         scope.launch {
             try {
-                discordConnexion.withKord { k ->
+                kordDiscordConnexion.withKord { k ->
                     kord = k
                     channel = requireNotNull(
                         k.getChannelOf<MessageChannel>(Snowflake(channelId))

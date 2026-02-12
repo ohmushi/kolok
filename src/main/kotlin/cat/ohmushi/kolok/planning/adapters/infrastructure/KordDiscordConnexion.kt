@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 import kotlin.coroutines.cancellation.CancellationException
 
 @Component
-class DiscordConnexion(
+class KordDiscordConnexion(
     @Value("\${discord.token}") private val token: String? = null,
 ) : SmartLifecycle {
 

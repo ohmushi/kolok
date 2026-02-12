@@ -94,6 +94,27 @@
             <version>0.17.0</version>
         </dependency>
         <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>6.3.0</version>
+            <!-- disable audio natives to reduce jar size by excluding `opus-java` and `tink` -->
+            <exclusions>
+                <exclusion>
+                    <groupId>club.minnced</groupId>
+                    <artifactId>opus-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.crypto.tink</groupId>
+                    <artifactId>tink</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jda-ktx</artifactId>
+            <version>0.14.1</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.oshai</groupId>
             <artifactId>kotlin-logging-jvm</artifactId>
             <version>7.0.3</version>
@@ -102,18 +123,6 @@
             <groupId>fr.ftnl.tools</groupId>
             <artifactId>EasyDiscordComponentV2-core</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-client-core</artifactId>
-            <version>3.4.0</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-client-cio</artifactId>
-            <version>3.4.0</version>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

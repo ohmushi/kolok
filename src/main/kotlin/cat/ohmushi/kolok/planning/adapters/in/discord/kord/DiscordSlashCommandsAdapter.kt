@@ -1,6 +1,6 @@
-package cat.ohmushi.kolok.planning.adapters.`in`.discord
+package cat.ohmushi.kolok.planning.adapters.`in`.discord.kord
 
-import cat.ohmushi.kolok.planning.adapters.infrastructure.DiscordConnexion
+import cat.ohmushi.kolok.planning.adapters.infrastructure.KordDiscordConnexion
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.entity.interaction.AutoCompleteInteraction
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DiscordSlashCommandsAdapter(
-    private val discordConnexion: DiscordConnexion,
+    private val kordDiscordConnexion: KordDiscordConnexion,
     absenceDiscordCommand: AbsenceDiscordCommand,
     cancelAbsenceDiscordCommand: CancelAbsenceDiscordCommand,
     @Value("\${discord.guild-id:}") private val guildId: String? = null,
@@ -29,7 +29,7 @@ class DiscordSlashCommandsAdapter(
     private val logger = KotlinLogging.logger {}
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    private val handlers: Map<String, CommandHandler> = mapOf(
+    private val handlers: Map<String, KordCommandHandler> = mapOf(
         "absence" to absenceDiscordCommand,
         "cancel-absence" to cancelAbsenceDiscordCommand,
     )
@@ -37,7 +37,7 @@ class DiscordSlashCommandsAdapter(
     @EventListener(ApplicationReadyEvent::class)
     fun registerSlashCommands() {
         scope.launch {
-            discordConnexion.withKord { kord ->
+            kordDiscordConnexion.withKord { kord ->
                 registerCommands(kord)
                 registerHandlers(kord)
                 logger.info { "Discord slash commands registered/handled." }
@@ -71,7 +71,7 @@ class DiscordSlashCommandsAdapter(
     }
 }
 
-interface CommandHandler {
+interface KordCommandHandler {
     suspend fun handle(interaction: ChatInputCommandInteraction)
     suspend fun handle(interaction: AutoCompleteInteraction) {
         // default no-op
