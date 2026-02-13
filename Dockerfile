@@ -1,4 +1,4 @@
-FROM gradle:8.13-jdk25 AS builder
+FROM gradle:jdk25 AS builder
 WORKDIR /app
 
 COPY build.gradle.kts settings.gradle.kts ./
