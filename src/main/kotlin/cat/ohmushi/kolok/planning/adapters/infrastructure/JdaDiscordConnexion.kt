@@ -1,12 +1,15 @@
 package cat.ohmushi.kolok.planning.adapters.infrastructure
 
-import dev.minn.jda.ktx.jdabuilder.intents
 import dev.minn.jda.ktx.jdabuilder.light
-import io.github.oshai.kotlinlogging.KotlinLogging
+import dev.minn.jda.ktx.util.SLF4J
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.JDABuilder
-import net.dv8tion.jda.api.requests.GatewayIntent
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.SmartLifecycle
 import org.springframework.stereotype.Component
@@ -17,7 +20,9 @@ class JdaDiscordConnexion(
     @Value("\${discord.token}") private val token: String? = null,
 ) : SmartLifecycle {
 
-    private val logger = KotlinLogging.logger {}
+    private val logger by SLF4J
+    private var scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var job: Job? = null
 
     @Volatile
     private var running: Boolean = false
@@ -28,6 +33,8 @@ class JdaDiscordConnexion(
     @Volatile
     private var jda: JDA? = null
 
+
+
     override fun isRunning(): Boolean = running
 
     override fun isAutoStartup(): Boolean = true
@@ -36,26 +43,27 @@ class JdaDiscordConnexion(
         if (running) return
         running = true
         ready = CompletableDeferred()
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-        try {
-            logger.info { "Starting Discord bot (JDA)..." }
+        job = scope.launch {
+            try {
+                logger.info( "Starting Discord bot (JDA)...")
 
-            val built = light(requireNotNull(token) { "Discord token not found." },
-                enableCoroutines=true) {
-                intents += listOf(GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT)
+                val built = light(requireNotNull(token) { "Discord token not found." },
+                    enableCoroutines=true)
+
+                jda = built
+
+                built.awaitReady()
+                logger.info( "Discord bot is ready as ${built.selfUser.name}")
+                if (!ready.isCompleted) ready.complete(Unit)
+            } catch (e: CancellationException) {
+                logger.info("Discord bot cancelled.", e)
+            } catch (t: Throwable) {
+                logger.error("Discord bot crashed." , t)
+                if (!ready.isCompleted) ready.completeExceptionally(t)
+                throw t
             }
-
-            jda = built
-
-            built.awaitReady()
-            logger.info { "Discord bot is ready as ${built.selfUser.name}" }
-            if (!ready.isCompleted) ready.complete(Unit)
-        } catch (e: CancellationException) {
-            logger.info(e) { "Discord bot cancelled." }
-        } catch (t: Throwable) {
-            logger.error(t) { "Discord bot crashed." }
-            if (!ready.isCompleted) ready.completeExceptionally(t)
-            throw t
         }
     }
 
@@ -65,8 +73,10 @@ class JdaDiscordConnexion(
 
         try {
             jda?.shutdownNow()
+            scope.cancel()
         } finally {
             jda = null
+            job = null
         }
     }
 

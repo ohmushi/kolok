@@ -1,6 +1,5 @@
 package cat.ohmushi.kolok.planning.adapters.out.events
 
-import cat.ohmushi.kolok.planning.adapters.infrastructure.KordDiscordConnexion
 import cat.ohmushi.kolok.planning.adapters.infrastructure.User
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
@@ -27,7 +26,6 @@ import kotlin.reflect.KClass
 
 @Component
 class KordDiscordEventsPublisher(
-    private val kordDiscordConnexion: KordDiscordConnexion,
     @Value("\${discord.planning.channel}") private val channelId: String,
     private val plannings: PlanningRepository,
     private val availabilities: AvailabilityCalendarRepository,
@@ -63,12 +61,12 @@ class KordDiscordEventsPublisher(
     fun warmupKordAndChannel() {
         scope.launch {
             try {
-                kordDiscordConnexion.withKord { k ->
-                    kord = k
-                    channel = requireNotNull(
-                        k.getChannelOf<MessageChannel>(Snowflake(channelId))
-                    ) { "Channel not found (id=$channelId)" }
-                }
+//                kordDiscordConnexion.withKord { k ->
+//                    kord = k
+//                    channel = requireNotNull(
+//                        k.getChannelOf<MessageChannel>(Snowflake(channelId))
+//                    ) { "Channel not found (id=$channelId)" }
+//                }
                 logger.info { "DiscordEventsPublisher ready (channelId=$channelId)." }
             } catch (t: Throwable) {
                 logger.error(t) { "DiscordEventsPublisher warmup failed; events won't be published to Discord." }

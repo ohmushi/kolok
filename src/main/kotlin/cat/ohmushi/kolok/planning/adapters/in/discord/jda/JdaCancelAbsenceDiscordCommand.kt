@@ -75,7 +75,7 @@ class JdaCancelAbsenceDiscordCommand(
         val responsible = identityLinks.findResponsibleIdByUserId(userId = absent)
         if(responsible == null) {
             logger.info { "No Responsible found for user $absent" }
-            interaction.replyChoices(emptyList())
+            interaction.replyChoices(emptyList()).queue()
             return
         }
 
@@ -88,6 +88,6 @@ class JdaCancelAbsenceDiscordCommand(
 
         interaction.replyChoices(absences.map {
             Command.Choice(it, it)
-        })
+        }).queue()
     }
 }

@@ -77,6 +77,6 @@ class JdaAbsenceDiscordCommand(
             Command.Choice(nextPeriod, nextPeriod)
         }
 
-        interaction.replyChoices(choices)
+        interaction.replyChoices(choices).queue()
     }
 }
