@@ -1,19 +1,20 @@
-FROM maven:4.0.0-rc-5-eclipse-temurin-25 AS builder
+FROM gradle:8.13-jdk25 AS builder
 WORKDIR /app
 
-COPY pom.xml .
-COPY .mvn .mvn
-COPY mvnw mvnw
+COPY build.gradle.kts settings.gradle.kts ./
+COPY gradle gradle
+COPY gradlew gradlew
+COPY gradlew.bat gradlew.bat
 
-RUN mvn -q -DskipTests dependency:go-offline
+RUN ./gradlew --no-daemon dependencies
 
 COPY src src
-RUN mvn -q -DskipTests clean package
+RUN ./gradlew --no-daemon clean bootJar
 
 FROM eclipse-temurin:25-jre-alpine AS runtime
 WORKDIR /app
 
-COPY --from=builder /app/target/*.jar /app/app.jar
+COPY --from=builder /app/build/libs/*.jar /app/app.jar
 COPY data data
 
 EXPOSE 8080

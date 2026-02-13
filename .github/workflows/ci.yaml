@@ -24,14 +24,16 @@ jobs:
         with:
           distribution: temurin
           java-version: "25"
-          cache: maven
 
-      - name: Maven verify
-        run: mvn -B -ntp clean verify
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Gradle test + build
+        run: ./gradlew --no-daemon clean test bootJar
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
           name: kolok-jar
-          path: target/*.jar
+          path: build/libs/*.jar
           if-no-files-found: error

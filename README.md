@@ -45,11 +45,11 @@ JSON_DIR_PATH=data
 
 ## Démarrer l’application
 
-### 1) En local (Maven Wrapper)
+### 1) En local (Gradle Wrapper)
 Commandes (à lancer à la racine du repo) :
 ```shell
-./mvnw.cmd -B -ntp clean verify
-./mvnw.cmd -B -ntp spring-boot:run
+./gradlew.bat --no-daemon clean test bootJar
+./gradlew.bat --no-daemon bootRun
 ```
 
 L’application écoute par défaut sur `http://localhost:8080`.
@@ -97,16 +97,17 @@ Persistance JSON actuelle (par défaut) :
 - Tests : `src/test/kotlin/...`
 - Lancer :
 ```shell
-./mvnw.cmd -B -ntp test
+./gradlew.bat --no-daemon test
 ```
 
 ## CI/CD
-- CI : `/.github/workflows/ci.yaml` exécute `mvn -B -ntp clean verify`.
+- CI : `/.github/workflows/ci.yaml` exécute `./gradlew --no-daemon clean test bootJar`.
 - Publication Docker : `/.github/workflows/docker-publish.yaml` publie sur GHCR après réussite de la CI.
 
 ## Structure du repo (racine)
-- `pom.xml` : build Maven
-- `mvnw`, `mvnw.cmd`, `.mvn/` : Maven wrapper
+- `build.gradle.kts`, `settings.gradle.kts` : build Gradle
+- `gradlew`, `gradlew.bat`, `gradle/` : Gradle wrapper
+- `pom.xml`, `mvnw*`, `.mvn/` : historique Maven (à supprimer une fois la migration stabilisée)
 - `Dockerfile` : build multi-stage + runtime JRE Alpine
 - `compose.yaml` : lancement du service
 - `compose.db.yaml` : override Postgres (profil `db`)
