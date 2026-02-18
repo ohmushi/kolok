@@ -11,7 +11,6 @@ version = "0.0.1-SNAPSHOT"
 
 data class Versions(
     val jda: String = "6.3.0",
-    val kord: String = "0.17.0",
     val jdaKtx: String = "0.14.1",
     val kotlinLogging: String = "7.0.3",
     val easyDiscordComponent: String = "1.0.1",
@@ -50,7 +49,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.assertj:assertj-core:${versions.assertj}")
 
-    implementation("dev.kord:kord-core-jvm:${versions.kord}")
     implementation("net.dv8tion:JDA:${versions.jda}") {
         exclude(group = "club.minnced", module = "opus-java")
         exclude(group = "com.google.crypto.tink", module = "tink")
