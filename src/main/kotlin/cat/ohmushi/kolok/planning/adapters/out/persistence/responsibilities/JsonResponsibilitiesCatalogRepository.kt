@@ -25,13 +25,13 @@ class JsonResponsibilitiesCatalogRepository(
             .sortedBy { it.first.start }
 
         val (firstFrom, firstSet) = versions.first()
-        var responsabilities = ResponsibilitiesCatalog.create(firstFrom, firstSet)
+        var responsibilities = ResponsibilitiesCatalog.create(firstFrom, firstSet)
 
         for ((from, set) in versions.drop(1)) {
-            responsabilities = responsabilities.defineFor(from, set)
+            responsibilities = responsibilities.defineFor(from, set)
         }
 
-        val (clean, _) = responsabilities.consumeEvents()
+        val (clean, _) = responsibilities.consumeEvents()
         return clean
     }
 

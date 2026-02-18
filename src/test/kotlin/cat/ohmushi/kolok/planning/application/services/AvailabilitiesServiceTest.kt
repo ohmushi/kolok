@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class AvailabilityServiceTest {
+class AvailabilitiesServiceTest {
 
     private val p1 = Period(LocalDate.of(2026, 1, 12))
     private val p2 = Period(LocalDate.of(2026, 1, 19))
@@ -30,7 +30,7 @@ class AvailabilityServiceTest {
     open class Base(roster: Set<Responsible>) {
         protected val repo = InMemoryAvailabilityCalendarRepository(roster)
         protected val publisher = CapturingEventsPublisher()
-        protected val service = AvailabilityService(repo, publisher)
+        protected val service = AvailabilitiesService(repo, publisher)
 
         protected fun recordUseCase(): RecordAbsenceUseCase = service
         protected fun cancelUseCase(): CancelAbsenceUseCase = service

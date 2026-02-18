@@ -12,7 +12,7 @@ class ActiveResponsibilitiesAdapter(
 ) : ActiveResponsibilitiesPort {
 
     override fun getFor(period: Period): List<Responsibility> {
-        val responsabilities = requireNotNull(repository.get())
-        return responsabilities.activeFor(period)
+        val responsibilities = requireNotNull(repository.get())
+        return responsibilities.activeFor(period)
     }
 }

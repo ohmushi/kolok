@@ -9,7 +9,7 @@ import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepo
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 
 @ApplicationService
-data class AvailabilityService(
+data class AvailabilitiesService(
     val availabilityCalendarRepository: AvailabilityCalendarRepository,
     val eventsPublisher: EventsPublisher
 ) : RecordAbsenceUseCase, CancelAbsenceUseCase {
