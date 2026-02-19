@@ -1,8 +1,8 @@
 package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
 
 import cat.ohmushi.kolok.planning.adapters.`in`.discord.kord.JdaCommandHandler
-import cat.ohmushi.kolok.planning.application.ports.`in`.CancelAbsenceCommand
-import cat.ohmushi.kolok.planning.application.ports.`in`.CancelAbsenceUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.CancelAbsenceCommand
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.CancelAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.domain.planning.Period

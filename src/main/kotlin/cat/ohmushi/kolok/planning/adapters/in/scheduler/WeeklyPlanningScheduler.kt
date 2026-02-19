@@ -1,7 +1,7 @@
 package cat.ohmushi.kolok.planning.adapters.`in`.scheduler
 
-import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
-import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningCommand
+import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningUseCase
 import cat.ohmushi.kolok.planning.domain.planning.Period
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component

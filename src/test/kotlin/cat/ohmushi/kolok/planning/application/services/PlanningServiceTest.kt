@@ -1,8 +1,10 @@
 package cat.ohmushi.kolok.planning.application.services
 
-import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
-import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
-import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.AvailableResponsiblesQuery
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.QueryAvailableResponsiblesUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningCommand
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ActiveResponsibilitiesQuery
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryActiveResponsibilitiesUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
@@ -20,8 +22,6 @@ import org.junit.jupiter.api.Nested
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-
-
 
 class PlanningServiceTest {
 
@@ -68,8 +68,8 @@ class PlanningServiceTest {
             )
 
             val repo = FakePlanningRepository(previous = previous)
-            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
+            val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
             val publisher = CapturingEventsPublisher()
@@ -78,8 +78,8 @@ class PlanningServiceTest {
 
             val result = PlanningService(
                 planningRepository = repo,
-                availableResponsiblesPort = availableResponsibles,
-                activeResponsibilitiesPort = activeResponsibilities,
+                queryAvailableResponsiblesUseCase = availableResponsibles,
+                queryActiveResponsibilitiesUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -87,8 +87,8 @@ class PlanningServiceTest {
 
             assertThat(repo.lastFindLatestBeforeArg).isEqualTo(periodS)
 
-            assertThat(availableResponsibles.lastPeriod).isEqualTo(periodS)
-            assertThat(activeResponsibilities.lastPeriod).isEqualTo(periodS)
+            assertThat(availableResponsibles.lastQuery!!.period).isEqualTo(periodS)
+            assertThat(activeResponsibilities.lastQuery!!.period).isEqualTo(periodS)
 
             assertThat(policy.lastRequest).isNotNull
             assertThat(policy.lastRequest!!.period).isEqualTo(periodS)
@@ -123,16 +123,16 @@ class PlanningServiceTest {
             )
 
             val repo = FakePlanningRepository(previous = null)
-            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
+            val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
             val publisher = CapturingEventsPublisher()
 
             val useCase = PlanningService(
                 planningRepository = repo,
-                availableResponsiblesPort = availableResponsibles,
-                activeResponsibilitiesPort = activeResponsibilities,
+                queryAvailableResponsiblesUseCase = availableResponsibles,
+                queryActiveResponsibilitiesUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -166,16 +166,16 @@ class PlanningServiceTest {
             )
 
             val repo = FakePlanningRepository(previous = null)
-            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
+            val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = planning)
             val publisher = CapturingEventsPublisher()
 
             val useCase = PlanningService(
                 planningRepository = repo,
-                availableResponsiblesPort = availableResponsibles,
-                activeResponsibilitiesPort = activeResponsibilities,
+                queryAvailableResponsiblesUseCase = availableResponsibles,
+                queryActiveResponsibilitiesUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -191,8 +191,8 @@ class PlanningServiceTest {
         @Test
         fun execute_shouldFail_whenRotationPolicyFails_andNotSaveOrPublish() {
             val repo = FakePlanningRepository(previous = null)
-            val availableResponsibles = CapturingAvailableResponsiblesPort(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingActiveResponsibilitiesPort(result = listOf(cuisine, bathroom, livingRoom))
+            val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
+            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = object : RotationPolicy {
                 override fun apply(
                     request: RotationRequest,
@@ -217,8 +217,8 @@ class PlanningServiceTest {
 
             val useCase = PlanningService(
                 planningRepository = repo,
-                availableResponsiblesPort = availableResponsibles,
-                activeResponsibilitiesPort = activeResponsibilities,
+                queryAvailableResponsiblesUseCase = availableResponsibles,
+                queryActiveResponsibilitiesUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -255,22 +255,22 @@ class PlanningServiceTest {
         }
     }
 
-    private class CapturingAvailableResponsiblesPort(
+    private class CapturingQueryAvailableResponsiblesUseCase(
         private val result: List<Responsible>
-    ) : AvailableResponsiblesPort {
-        var lastPeriod: Period? = null
-        override fun getFor(period: Period): List<Responsible> {
-            lastPeriod = period
+    ) : QueryAvailableResponsiblesUseCase {
+        var lastQuery: AvailableResponsiblesQuery? = null
+        override fun availableResponsiblesFor(query: AvailableResponsiblesQuery): List<Responsible> {
+            lastQuery = query
             return result
         }
     }
 
-    private class CapturingActiveResponsibilitiesPort(
+    private class CapturingQueryActiveResponsibilitiesUseCase(
         private val result: List<Responsibility>
-    ) : ActiveResponsibilitiesPort {
-        var lastPeriod: Period? = null
-        override fun getFor(period: Period): List<Responsibility> {
-            lastPeriod = period
+    ) : QueryActiveResponsibilitiesUseCase {
+        var lastQuery: ActiveResponsibilitiesQuery? = null
+        override fun activeResponsibilitiesFor(command: ActiveResponsibilitiesQuery): List<Responsibility> {
+            lastQuery = command
             return result
         }
     }

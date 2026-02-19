@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.application.ports.`in`
+package cat.ohmushi.kolok.planning.application.ports.`in`.availabilities
 
 import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsible

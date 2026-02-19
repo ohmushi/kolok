@@ -1,8 +1,8 @@
 package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
 
 import cat.ohmushi.kolok.planning.adapters.`in`.discord.kord.JdaCommandHandler
-import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceCommand
-import cat.ohmushi.kolok.planning.application.ports.`in`.RecordAbsenceUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.RecordAbsenceCommand
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.RecordAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.domain.planning.Period
 import io.github.oshai.kotlinlogging.KotlinLogging

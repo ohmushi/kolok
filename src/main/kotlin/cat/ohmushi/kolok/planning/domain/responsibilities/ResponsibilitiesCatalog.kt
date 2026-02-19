@@ -74,11 +74,7 @@ class ResponsibilitiesCatalog private constructor(
     }
 
     fun defineFor(from: Period, responsibilities: Set<Responsibility>): ResponsibilitiesCatalog {
-        val version = ResponsibilitiesVersion(from = from, responsibilities = responsibilities)
-
-        val kept = versions.filterNot { it.from == from }
-        val nextVersions = (kept + version).sortedBy { it.from.start }
-
+        val nextVersions = upsertVersion(from, responsibilities)
         val event = ResponsibilitiesDefined(from = from, responsibilities = responsibilities)
 
         return ResponsibilitiesCatalog(

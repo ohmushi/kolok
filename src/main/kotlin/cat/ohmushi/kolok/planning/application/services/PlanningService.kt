@@ -1,11 +1,13 @@
 package cat.ohmushi.kolok.planning.application.services
 
 import cat.ohmushi.kolok.planning.application.annotations.ApplicationService
-import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningCommand
-import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningResult
-import cat.ohmushi.kolok.planning.application.ports.`in`.GeneratePlanningUseCase
-import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
-import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.AvailableResponsiblesQuery
+import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.QueryAvailableResponsiblesUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningCommand
+import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningResult
+import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ActiveResponsibilitiesQuery
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryActiveResponsibilitiesUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
@@ -20,8 +22,8 @@ data class PlanningService (
     val rotationPolicy: RotationPolicy,
     val planningFactory: PlanningFactory,
     val eventsPublisher: EventsPublisher,
-    val availableResponsiblesPort: AvailableResponsiblesPort,
-    val activeResponsibilitiesPort: ActiveResponsibilitiesPort,
+    val queryAvailableResponsiblesUseCase: QueryAvailableResponsiblesUseCase,
+    val queryActiveResponsibilitiesUseCase: QueryActiveResponsibilitiesUseCase,
 )
     : GeneratePlanningUseCase
 {
@@ -31,8 +33,12 @@ data class PlanningService (
 
         val request = RotationRequest(
             period = command.period,
-            responsibles = availableResponsiblesPort.getFor(command.period),
-            responsibilities = activeResponsibilitiesPort.getFor(command.period),
+            responsibles = queryAvailableResponsiblesUseCase.availableResponsiblesFor(
+                AvailableResponsiblesQuery(period = command.period)
+            ),
+            responsibilities = queryActiveResponsibilitiesUseCase.activeResponsibilitiesFor(
+                ActiveResponsibilitiesQuery(period = command.period)
+            ),
             previous = previous
         )
 

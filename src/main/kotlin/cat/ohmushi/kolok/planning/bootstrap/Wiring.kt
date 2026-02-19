@@ -1,15 +1,9 @@
 package cat.ohmushi.kolok.planning.bootstrap
 
-import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.AvailableResponsiblesAdapter
 import cat.ohmushi.kolok.planning.adapters.out.persistence.availability.FixedRosterProvider
 import cat.ohmushi.kolok.planning.adapters.infrastructure.JsonPersistence
 import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.FilePlanningRepository
-import cat.ohmushi.kolok.planning.adapters.out.persistence.responsibilities.ActiveResponsibilitiesAdapter
-import cat.ohmushi.kolok.planning.application.ports.out.ActiveResponsibilitiesPort
-import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
-import cat.ohmushi.kolok.planning.application.ports.out.AvailableResponsiblesPort
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
-import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
 import cat.ohmushi.kolok.planning.application.ports.out.RosterProvider
 import cat.ohmushi.kolok.planning.domain.rotation.BalanceLoadPolicy
 import cat.ohmushi.kolok.planning.domain.rotation.BootstrapIfNoPreviousPolicy
@@ -64,17 +58,6 @@ class Wiring(
         )
     }
 
-    @Bean
-    fun activeResponsibilitiesPort(responsabilityCatalogRepository: ResponsibilitiesCatalogRepository): ActiveResponsibilitiesPort =
-        ActiveResponsibilitiesAdapter(
-            repository = responsabilityCatalogRepository
-        )
-
-    @Bean
-    fun availableResponsiblesPort(availabilityCalendarRepository: AvailabilityCalendarRepository, rosterProvider: FixedRosterProvider): AvailableResponsiblesPort =
-        AvailableResponsiblesAdapter(
-            repository = availabilityCalendarRepository,
-        )
 
     @Bean
     fun rosterProvider(): RosterProvider = FixedRosterProvider()

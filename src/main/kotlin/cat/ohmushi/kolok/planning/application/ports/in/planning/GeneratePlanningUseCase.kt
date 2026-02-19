@@ -1,4 +1,4 @@
-package cat.ohmushi.kolok.planning.application.ports.`in`
+package cat.ohmushi.kolok.planning.application.ports.`in`.planning
 
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
 import cat.ohmushi.kolok.planning.domain.planning.Period
