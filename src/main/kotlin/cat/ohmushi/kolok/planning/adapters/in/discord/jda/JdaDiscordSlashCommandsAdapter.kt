@@ -1,7 +1,5 @@
-package cat.ohmushi.kolok.planning.adapters.`in`.discord.kord
+package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
 
-import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaAbsenceDiscordCommand
-import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaCancelAbsenceDiscordCommand
 import cat.ohmushi.kolok.planning.adapters.infrastructure.JdaDiscordConnexion
 import dev.minn.jda.ktx.events.listener
 import dev.minn.jda.ktx.util.SLF4J
@@ -13,9 +11,7 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.Commands
-import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -26,7 +22,7 @@ class JdaDiscordSlashCommandsAdapter(
     private val jdaDiscordConnexion: JdaDiscordConnexion,
     absenceDiscordCommand: JdaAbsenceDiscordCommand,
     cancelAbsenceDiscordCommand: JdaCancelAbsenceDiscordCommand,
-    @Value("\${discord.guild-id:}") private val guildId: String? = null,
+    responsibilitiesForPeriodDiscordCommand: JdaResponsibilitiesForPeriodDiscordCommand,
 ) {
     private val logger by SLF4J
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -35,6 +31,7 @@ class JdaDiscordSlashCommandsAdapter(
     private val handlers: Map<String, JdaCommandHandler> = mapOf(
         "absence" to absenceDiscordCommand,
         "cancel-absence" to cancelAbsenceDiscordCommand,
+        "responsibilities" to responsibilitiesForPeriodDiscordCommand,
     )
 
     @EventListener(ApplicationReadyEvent::class)
@@ -75,12 +72,4 @@ class JdaDiscordSlashCommandsAdapter(
             { "No handler for command ${it.name}" }.handle(it)
         }
     }
-}
-
-interface JdaCommandHandler {
-    suspend fun handle(interaction: SlashCommandInteractionEvent)
-    suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        // default no-op
-    }
-    val options: List<OptionData>
 }

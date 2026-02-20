@@ -4,8 +4,8 @@ import cat.ohmushi.kolok.planning.adapters.out.persistence.planning.inmemory.InM
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.AvailableResponsiblesQuery
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.QueryAvailableResponsiblesUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningCommand
-import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ActiveResponsibilitiesQuery
-import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryActiveResponsibilitiesUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ResponsibilitiesForPeriodQuery
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryResponsibilitiesForPeriodUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.bootstrap.Wiring
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
@@ -44,7 +44,7 @@ class GeneratePlanningScenarioTest {
 
         val repo = InMemoryPlanningRepository()
         val responsiblesUseCase = FixedAvailableResponsiblesUseCase(listOf(fabio, theo, charles))
-        val responsibilitiesUseCase = FixedActiveResponsibilitiesUseCase(listOf(cuisine, bathroom, livingRoom))
+        val responsibilitiesUseCase = FixedResponsibilitiesForPeriodUseCase(listOf(cuisine, bathroom, livingRoom))
         val publisher = CapturingEventsPublisher()
 
         val factory = DefaultPlanningFactory()
@@ -52,7 +52,7 @@ class GeneratePlanningScenarioTest {
         val service = PlanningService(
             planningRepository = repo,
             queryAvailableResponsiblesUseCase = responsiblesUseCase,
-            queryActiveResponsibilitiesUseCase = responsibilitiesUseCase,
+            queryResponsibilitiesForPeriodUseCase = responsibilitiesUseCase,
             rotationPolicy = rotationPolicy,
             planningFactory = factory,
             eventsPublisher = publisher
@@ -98,13 +98,13 @@ class GeneratePlanningScenarioTest {
 
         val repo = InMemoryPlanningRepository()
         val responsiblesUseCase = FixedAvailableResponsiblesUseCase(listOf(fabio, theo, charles))
-        val responsibilitiesUseCase = FixedActiveResponsibilitiesUseCase(listOf(cuisine, bathroom, livingRoom, toilets, trash))
+        val responsibilitiesUseCase = FixedResponsibilitiesForPeriodUseCase(listOf(cuisine, bathroom, livingRoom, toilets, trash))
         val publisher = CapturingEventsPublisher()
 
         val service = PlanningService(
             planningRepository = repo,
             queryAvailableResponsiblesUseCase = responsiblesUseCase,
-            queryActiveResponsibilitiesUseCase = responsibilitiesUseCase,
+            queryResponsibilitiesForPeriodUseCase = responsibilitiesUseCase,
             rotationPolicy = rotationPolicy,
             planningFactory = DefaultPlanningFactory(),
             eventsPublisher = publisher
@@ -156,13 +156,13 @@ class GeneratePlanningScenarioTest {
                 p3 to listOf(fabio, theo, charles)
             )
         )
-        val responsibilitiesUseCase = FixedActiveResponsibilitiesUseCase(listOf(cuisine, bathroom, livingRoom))
+        val responsibilitiesUseCase = FixedResponsibilitiesForPeriodUseCase(listOf(cuisine, bathroom, livingRoom))
         val publisher = CapturingEventsPublisher()
 
         val service = PlanningService(
             planningRepository = repo,
             queryAvailableResponsiblesUseCase = responsiblesUseCase,
-            queryActiveResponsibilitiesUseCase = responsibilitiesUseCase,
+            queryResponsibilitiesForPeriodUseCase = responsibilitiesUseCase,
             rotationPolicy = rotationPolicy,
             planningFactory = DefaultPlanningFactory(),
             eventsPublisher = publisher
@@ -212,7 +212,7 @@ class GeneratePlanningScenarioTest {
 
         val repo = InMemoryPlanningRepository()
         val responsiblesUseCase = FixedAvailableResponsiblesUseCase(listOf(fabio, theo, charles))
-        val responsibilitiesUseCase = PeriodActiveResponsibilitiesUseCase(
+        val responsibilitiesUseCase = PeriodResponsibilitiesForPeriodUseCase(
             mapOf(
                 p0 to listOf(cuisine, bathroom, livingRoom),
                 p1 to listOf(cuisine, bathroom, livingRoom, toilets)
@@ -223,7 +223,7 @@ class GeneratePlanningScenarioTest {
         val service = PlanningService(
             planningRepository = repo,
             queryAvailableResponsiblesUseCase = responsiblesUseCase,
-            queryActiveResponsibilitiesUseCase = responsibilitiesUseCase,
+            queryResponsibilitiesForPeriodUseCase = responsibilitiesUseCase,
             rotationPolicy = rotationPolicy,
             planningFactory = DefaultPlanningFactory(),
             eventsPublisher = publisher
@@ -259,10 +259,10 @@ class GeneratePlanningScenarioTest {
         override fun availableResponsiblesFor(query: AvailableResponsiblesQuery): List<Responsible> = responsibles
     }
 
-    private class FixedActiveResponsibilitiesUseCase(
+    private class FixedResponsibilitiesForPeriodUseCase(
         private val responsibilities: List<Responsibility>
-    ) : QueryActiveResponsibilitiesUseCase {
-        override fun activeResponsibilitiesFor(command: ActiveResponsibilitiesQuery): List<Responsibility> = responsibilities
+    ) : QueryResponsibilitiesForPeriodUseCase {
+        override fun activeResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> = responsibilities
     }
 
     private class CapturingEventsPublisher : EventsPublisher {
@@ -279,10 +279,10 @@ class GeneratePlanningScenarioTest {
             requireNotNull(perPeriod[query.period]) { "No responsibles configured for period=${query.period}" }
     }
 
-    private class PeriodActiveResponsibilitiesUseCase(
+    private class PeriodResponsibilitiesForPeriodUseCase(
         private val perPeriod: Map<Period, List<Responsibility>>
-    ) : QueryActiveResponsibilitiesUseCase {
-        override fun activeResponsibilitiesFor(command: ActiveResponsibilitiesQuery): List<Responsibility> =
+    ) : QueryResponsibilitiesForPeriodUseCase {
+        override fun activeResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> =
             requireNotNull(perPeriod[command.period]) { "No responsibilities configured for period=${command.period}" }
     }
 }

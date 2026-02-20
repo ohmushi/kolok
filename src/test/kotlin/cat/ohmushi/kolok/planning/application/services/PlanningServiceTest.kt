@@ -3,8 +3,8 @@ package cat.ohmushi.kolok.planning.application.services
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.AvailableResponsiblesQuery
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.QueryAvailableResponsiblesUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningCommand
-import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ActiveResponsibilitiesQuery
-import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryActiveResponsibilitiesUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ResponsibilitiesForPeriodQuery
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryResponsibilitiesForPeriodUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.planning.Assignment
@@ -69,7 +69,7 @@ class PlanningServiceTest {
 
             val repo = FakePlanningRepository(previous = previous)
             val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
+            val activeResponsibilities = CapturingQueryResponsibilitiesForPeriodUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
             val publisher = CapturingEventsPublisher()
@@ -79,7 +79,7 @@ class PlanningServiceTest {
             val result = PlanningService(
                 planningRepository = repo,
                 queryAvailableResponsiblesUseCase = availableResponsibles,
-                queryActiveResponsibilitiesUseCase = activeResponsibilities,
+                queryResponsibilitiesForPeriodUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -124,7 +124,7 @@ class PlanningServiceTest {
 
             val repo = FakePlanningRepository(previous = null)
             val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
+            val activeResponsibilities = CapturingQueryResponsibilitiesForPeriodUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = expectedPlanning)
             val publisher = CapturingEventsPublisher()
@@ -132,7 +132,7 @@ class PlanningServiceTest {
             val useCase = PlanningService(
                 planningRepository = repo,
                 queryAvailableResponsiblesUseCase = availableResponsibles,
-                queryActiveResponsibilitiesUseCase = activeResponsibilities,
+                queryResponsibilitiesForPeriodUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -167,7 +167,7 @@ class PlanningServiceTest {
 
             val repo = FakePlanningRepository(previous = null)
             val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
+            val activeResponsibilities = CapturingQueryResponsibilitiesForPeriodUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = CapturingRotationPolicy(resultDraft = draft)
             val factory = CapturingPlanningFactory(resultPlanning = planning)
             val publisher = CapturingEventsPublisher()
@@ -175,7 +175,7 @@ class PlanningServiceTest {
             val useCase = PlanningService(
                 planningRepository = repo,
                 queryAvailableResponsiblesUseCase = availableResponsibles,
-                queryActiveResponsibilitiesUseCase = activeResponsibilities,
+                queryResponsibilitiesForPeriodUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -192,7 +192,7 @@ class PlanningServiceTest {
         fun execute_shouldFail_whenRotationPolicyFails_andNotSaveOrPublish() {
             val repo = FakePlanningRepository(previous = null)
             val availableResponsibles = CapturingQueryAvailableResponsiblesUseCase(result = listOf(fabio, theo, charles))
-            val activeResponsibilities = CapturingQueryActiveResponsibilitiesUseCase(result = listOf(cuisine, bathroom, livingRoom))
+            val activeResponsibilities = CapturingQueryResponsibilitiesForPeriodUseCase(result = listOf(cuisine, bathroom, livingRoom))
             val policy = object : RotationPolicy {
                 override fun apply(
                     request: RotationRequest,
@@ -218,7 +218,7 @@ class PlanningServiceTest {
             val useCase = PlanningService(
                 planningRepository = repo,
                 queryAvailableResponsiblesUseCase = availableResponsibles,
-                queryActiveResponsibilitiesUseCase = activeResponsibilities,
+                queryResponsibilitiesForPeriodUseCase = activeResponsibilities,
                 rotationPolicy = policy,
                 planningFactory = factory,
                 eventsPublisher = publisher
@@ -265,11 +265,11 @@ class PlanningServiceTest {
         }
     }
 
-    private class CapturingQueryActiveResponsibilitiesUseCase(
+    private class CapturingQueryResponsibilitiesForPeriodUseCase(
         private val result: List<Responsibility>
-    ) : QueryActiveResponsibilitiesUseCase {
-        var lastQuery: ActiveResponsibilitiesQuery? = null
-        override fun activeResponsibilitiesFor(command: ActiveResponsibilitiesQuery): List<Responsibility> {
+    ) : QueryResponsibilitiesForPeriodUseCase {
+        var lastQuery: ResponsibilitiesForPeriodQuery? = null
+        override fun activeResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> {
             lastQuery = command
             return result
         }

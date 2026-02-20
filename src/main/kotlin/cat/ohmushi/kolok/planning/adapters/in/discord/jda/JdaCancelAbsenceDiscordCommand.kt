@@ -1,6 +1,5 @@
 package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
 
-import cat.ohmushi.kolok.planning.adapters.`in`.discord.kord.JdaCommandHandler
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.CancelAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.CancelAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
@@ -14,7 +13,6 @@ import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 import java.time.LocalDate.now
 import java.time.format.DateTimeFormatter
 
@@ -37,7 +35,7 @@ class JdaCancelAbsenceDiscordCommand(
         require(interaction.name == "cancel-absence") { "Invalid command for CancelAbsenceCommand" }
 
         val absent = interaction.getOption("absent")?.asUser ?: interaction.user
-        val from = parsePeriod(interaction.getOption("start")?.asString?.trim().orEmpty())
+        val from = Period.parse(interaction.getOption("start")?.asString?.trim().orEmpty())
 
         try {
             val responsible = identityLinks.findResponsibleIdByUserId(userId = absent.id)
@@ -60,11 +58,6 @@ class JdaCancelAbsenceDiscordCommand(
             logger.error(t) { "Failed to cancel absence" }
             interaction.reply("Erreur interne lors de l'annulation.").setEphemeral(true).queue()
         }
-    }
-
-    private fun parsePeriod(date: String): Period {
-        val parsed = LocalDate.parse(date)
-        return Period(parsed)
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {

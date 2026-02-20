@@ -6,8 +6,8 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.QueryAva
 import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningResult
 import cat.ohmushi.kolok.planning.application.ports.`in`.planning.GeneratePlanningUseCase
-import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ActiveResponsibilitiesQuery
-import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryActiveResponsibilitiesUseCase
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ResponsibilitiesForPeriodQuery
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryResponsibilitiesForPeriodUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.EventsPublisher
 import cat.ohmushi.kolok.planning.application.ports.out.PlanningRepository
 import cat.ohmushi.kolok.planning.domain.events.DomainEvent
@@ -23,7 +23,7 @@ data class PlanningService (
     val planningFactory: PlanningFactory,
     val eventsPublisher: EventsPublisher,
     val queryAvailableResponsiblesUseCase: QueryAvailableResponsiblesUseCase,
-    val queryActiveResponsibilitiesUseCase: QueryActiveResponsibilitiesUseCase,
+    val queryResponsibilitiesForPeriodUseCase: QueryResponsibilitiesForPeriodUseCase,
 )
     : GeneratePlanningUseCase
 {
@@ -36,8 +36,8 @@ data class PlanningService (
             responsibles = queryAvailableResponsiblesUseCase.availableResponsiblesFor(
                 AvailableResponsiblesQuery(period = command.period)
             ),
-            responsibilities = queryActiveResponsibilitiesUseCase.activeResponsibilitiesFor(
-                ActiveResponsibilitiesQuery(period = command.period)
+            responsibilities = queryResponsibilitiesForPeriodUseCase.activeResponsibilitiesFor(
+                ResponsibilitiesForPeriodQuery(period = command.period)
             ),
             previous = previous
         )
