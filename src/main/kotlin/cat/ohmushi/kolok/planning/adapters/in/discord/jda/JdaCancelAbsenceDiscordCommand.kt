@@ -36,13 +36,12 @@ class JdaCancelAbsenceDiscordCommand(
 
         val absent = interaction.getOption("absent")?.asUser ?: interaction.user
         val from = Period.parse(interaction.getOption("start")?.asString?.trim().orEmpty())
-
+        val responsible = identityLinks.findResponsibleIdByUserId(userId = absent.id)
+        if (responsible == null) {
+            interaction.reply("Aucun Responsable trouvé pour user=${absent}.").setEphemeral(true).queue()
+            return
+        }
         try {
-            val responsible = identityLinks.findResponsibleIdByUserId(userId = absent.id)
-            if (responsible == null) {
-                interaction.reply("Aucun Responsable trouvé pour user=${absent}.").setEphemeral(true).queue()
-                return
-            }
 
             cancelAbsence.cancelAbsence(
                 CancelAbsenceCommand(

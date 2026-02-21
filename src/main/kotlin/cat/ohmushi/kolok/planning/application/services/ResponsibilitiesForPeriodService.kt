@@ -11,7 +11,7 @@ data class ResponsibilitiesForPeriodService(
     private val repository: ResponsibilitiesCatalogRepository,
 ) : QueryResponsibilitiesForPeriodUseCase {
 
-    override fun activeResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> {
+    override fun ResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> {
         val catalog = requireNotNull(repository.get())
         return catalog.activeFor(command.period)
     }

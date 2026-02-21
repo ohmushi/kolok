@@ -16,7 +16,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
-
 @Component
 class JdaDiscordSlashCommandsAdapter(
     private val jdaDiscordConnexion: JdaDiscordConnexion,
@@ -28,6 +27,7 @@ class JdaDiscordSlashCommandsAdapter(
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     // TODO reflection to avoid hardcoding command names here
+    // TODO make subcommands (e.g. /absence record, /absence cancel) to avoid hardcoding command names here
     private val handlers: Map<String, JdaCommandHandler> = mapOf(
         "absence" to absenceDiscordCommand,
         "cancel-absence" to cancelAbsenceDiscordCommand,

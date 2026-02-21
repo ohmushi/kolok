@@ -36,7 +36,7 @@ data class PlanningService (
             responsibles = queryAvailableResponsiblesUseCase.availableResponsiblesFor(
                 AvailableResponsiblesQuery(period = command.period)
             ),
-            responsibilities = queryResponsibilitiesForPeriodUseCase.activeResponsibilitiesFor(
+            responsibilities = queryResponsibilitiesForPeriodUseCase.ResponsibilitiesFor(
                 ResponsibilitiesForPeriodQuery(period = command.period)
             ),
             previous = previous
