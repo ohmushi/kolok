@@ -24,6 +24,17 @@ class JdaCancelAbsenceDiscordCommand(
 ) : JdaCommandHandler {
     private val logger = KotlinLogging.logger {}
 
+    private object CancelAbsenceMessageFormatter {
+        fun noResponsibleFound(user: String): String = "Aucun Responsable trouvé pour user=$user."
+
+        fun cancelled(responsibleName: String, from: Period): String =
+            "Absence retirée pour $responsibleName à partir du ${from.start}."
+
+        fun invalidInput(details: String?): String = "Entrée invalide: ${details ?: "(détails indisponibles)"}"
+
+        fun internalError(): String = "Erreur interne lors de l'annulation."
+    }
+
     override val options: List<OptionData>
         get() = listOf(
             OptionData(OptionType.STRING, "start", "Début (YYYY-MM-DD, doit être un lundi)", true, true),
@@ -38,24 +49,22 @@ class JdaCancelAbsenceDiscordCommand(
         val from = Period.parse(interaction.getOption("start")?.asString?.trim().orEmpty())
         val responsible = identityLinks.findResponsibleIdByUserId(userId = absent.id)
         if (responsible == null) {
-            interaction.reply("Aucun Responsable trouvé pour user=${absent}.").setEphemeral(true).queue()
+            interaction.reply(CancelAbsenceMessageFormatter.noResponsibleFound(absent.toString())).setEphemeral(true).queue()
             return
         }
-        try {
-
-            cancelAbsence.cancelAbsence(
-                CancelAbsenceCommand(
-                    responsible = responsible,
-                    from = from,
-                )
+        cancelAbsence.cancelAbsence(
+            CancelAbsenceCommand(
+                responsible = responsible,
+                from = from,
             )
-
-            interaction.reply("Absence retirée pour ${responsible.name} à partir du ${from.start}.").setEphemeral(true).queue()
+        )
+        try {
+            interaction.reply(CancelAbsenceMessageFormatter.cancelled(responsible.name, from)).setEphemeral(true).queue()
         } catch (e: IllegalArgumentException) {
-            interaction.reply("Entrée invalide: ${e.message}").setEphemeral(true).queue()
+            interaction.reply(CancelAbsenceMessageFormatter.invalidInput(e.message)).setEphemeral(true).queue()
         } catch (t: Throwable) {
             logger.error(t) { "Failed to cancel absence" }
-            interaction.reply("Erreur interne lors de l'annulation.").setEphemeral(true).queue()
+            interaction.reply(CancelAbsenceMessageFormatter.internalError()).setEphemeral(true).queue()
         }
     }
 
