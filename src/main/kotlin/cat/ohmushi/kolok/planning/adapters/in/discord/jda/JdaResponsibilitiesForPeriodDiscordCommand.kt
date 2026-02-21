@@ -17,6 +17,8 @@ import java.time.LocalDate
 class JdaResponsibilitiesForPeriodDiscordCommand(
     private val queryResponsibilitiesForPeriodUseCase: QueryResponsibilitiesForPeriodUseCase,
 ) : JdaCommandHandler {
+    override val commandName: String = "responsibilities"
+
     private val logger = KotlinLogging.logger {}
 
     override val options: List<OptionData>

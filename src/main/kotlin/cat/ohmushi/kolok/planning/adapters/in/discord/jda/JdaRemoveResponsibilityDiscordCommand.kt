@@ -21,6 +21,8 @@ class JdaRemoveResponsibilityDiscordCommand(
     private val queryResponsibilitiesForPeriodUseCase: QueryResponsibilitiesForPeriodUseCase,
 ) : JdaCommandHandler {
 
+    override val commandName: String = "remove-responsibility"
+
     private val logger = KotlinLogging.logger {}
 
     override val options: List<OptionData>

@@ -17,6 +17,8 @@ class JdaAddResponsibilityDiscordCommand(
     private val addResponsibility: AddResponsibilityUseCase,
 ) : JdaCommandHandler {
 
+    override val commandName: String = "add-responsibility"
+
     private val logger = KotlinLogging.logger {}
 
     override val options: List<OptionData>
@@ -85,4 +87,3 @@ private object AddResponsibilityMessageFormatter {
         return "Erreur interne lors de l'ajout de la responsabilité."
     }
 }
-

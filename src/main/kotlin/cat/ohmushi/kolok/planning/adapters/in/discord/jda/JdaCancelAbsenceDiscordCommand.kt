@@ -22,6 +22,8 @@ class JdaCancelAbsenceDiscordCommand(
     private val cancelAbsence: CancelAbsenceUseCase,
     private val availabilityCalendarRepository: AvailabilityCalendarRepository,
 ) : JdaCommandHandler {
+    override val commandName: String = "cancel-absence"
+
     private val logger = KotlinLogging.logger {}
 
     private object CancelAbsenceMessageFormatter {

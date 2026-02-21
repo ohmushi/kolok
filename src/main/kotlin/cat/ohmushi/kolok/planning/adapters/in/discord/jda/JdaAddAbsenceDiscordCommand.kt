@@ -17,6 +17,8 @@ class JdaAddAbsenceDiscordCommand(
     val identityLinks: UserIdentityLinkRepository,
     private val recordAbsence: RecordAbsenceUseCase,
 ) : JdaCommandHandler {
+    override val commandName: String = "absence"
+
     private val logger = KotlinLogging.logger {}
 
     override val options: List<OptionData>
