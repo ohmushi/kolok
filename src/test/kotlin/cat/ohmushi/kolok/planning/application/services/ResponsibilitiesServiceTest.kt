@@ -1,12 +1,14 @@
 package cat.ohmushi.kolok.planning.application.services
 
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.AddResponsibilityCommand
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.RemoveResponsibilityCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ResponsibilitiesForPeriodQuery
 import cat.ohmushi.kolok.planning.application.ports.out.ResponsibilitiesCatalogRepository
 import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.ResponsibilitiesCatalog
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -50,6 +52,33 @@ class ResponsibilitiesServiceTest {
         val service = ResponsibilitiesService(repository = repo)
 
         service.addResponsibility(AddResponsibilityCommand(responsibility = b, from = p2))
+
+        assertThat(repo.saveCalls).isZero()
+    }
+
+    @Test
+    fun `removeResponsibility - retire une responsibility et persiste`() {
+        val initial = ResponsibilitiesCatalog.create(initialFrom = p1, responsibilities = setOf(a, b))
+        val repo = InMemoryResponsibilitiesCatalogRepository(initial)
+        val service = ResponsibilitiesService(repository = repo)
+
+        service.removeResponsibility(RemoveResponsibilityCommand(responsibility = b, from = p2))
+
+        assertThat(repo.saved).hasSize(1)
+        val saved = repo.saved.single()
+        assertThat(saved.activeFor(p1)).containsExactly(a, b)
+        assertThat(saved.activeFor(p2)).containsExactly(a)
+    }
+
+    @Test
+    fun `removeResponsibility - echoue si la responsibility n'est pas active et ne persiste pas`() {
+        val initial = ResponsibilitiesCatalog.create(initialFrom = p1, responsibilities = setOf(a))
+        val repo = ForbidSaveResponsibilitiesCatalogRepository(initial)
+        val service = ResponsibilitiesService(repository = repo)
+
+        assertThatThrownBy {
+            service.removeResponsibility(RemoveResponsibilityCommand(responsibility = b, from = p2))
+        }.isInstanceOf(IllegalArgumentException::class.java)
 
         assertThat(repo.saveCalls).isZero()
     }
