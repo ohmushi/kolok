@@ -269,7 +269,7 @@ class PlanningServiceTest {
         private val result: List<Responsibility>
     ) : QueryResponsibilitiesForPeriodUseCase {
         var lastQuery: ResponsibilitiesForPeriodQuery? = null
-        override fun ResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> {
+        override fun responsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> {
             lastQuery = command
             return result
         }

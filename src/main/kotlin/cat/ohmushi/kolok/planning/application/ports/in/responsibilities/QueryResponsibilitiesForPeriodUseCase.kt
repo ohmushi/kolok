@@ -4,7 +4,7 @@ import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 
 interface QueryResponsibilitiesForPeriodUseCase {
-    fun ResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility>
+    fun responsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility>
 }
 
 data class ResponsibilitiesForPeriodQuery(

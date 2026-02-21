@@ -17,11 +17,12 @@ import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 @Component
-class JdaDiscordSlashCommandsAdapter(
+class JdaDiscordSlashCommandsRegistor(
     private val jdaDiscordConnexion: JdaDiscordConnexion,
-    absenceDiscordCommand: JdaAbsenceDiscordCommand,
+    absenceDiscordCommand: JdaAddAbsenceDiscordCommand,
     cancelAbsenceDiscordCommand: JdaCancelAbsenceDiscordCommand,
     responsibilitiesForPeriodDiscordCommand: JdaResponsibilitiesForPeriodDiscordCommand,
+    addResponsibilityDiscordCommand: JdaAddResponsibilityDiscordCommand,
 ) {
     private val logger by SLF4J
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -32,6 +33,7 @@ class JdaDiscordSlashCommandsAdapter(
         "absence" to absenceDiscordCommand,
         "cancel-absence" to cancelAbsenceDiscordCommand,
         "responsibilities" to responsibilitiesForPeriodDiscordCommand,
+        "add-responsibility" to addResponsibilityDiscordCommand,
     )
 
     @EventListener(ApplicationReadyEvent::class)
@@ -41,7 +43,7 @@ class JdaDiscordSlashCommandsAdapter(
                 registerCommands(jda)
                 registerHandlers(jda)
 
-                logger.info("Discord slash commands registered/handled.")
+                logger.info("Discord slash commands registered")
             }
         }
     }

@@ -10,6 +10,9 @@
   }, {
     "from" : "2026-01-12",
     "responsibilities" : [ "Cuisine", "Salle de bain", "Salon", "Toilettes" ]
+  }, {
+    "from" : "2026-02-23",
+    "responsibilities" : [ "Cuisine", "Salle de bain", "Salon", "Toilettes", "test" ]
   } ],
   "users" : [ {
     "responsible" : "Theo",

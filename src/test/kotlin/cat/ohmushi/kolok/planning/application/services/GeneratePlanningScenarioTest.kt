@@ -262,7 +262,7 @@ class GeneratePlanningScenarioTest {
     private class FixedResponsibilitiesForPeriodUseCase(
         private val responsibilities: List<Responsibility>
     ) : QueryResponsibilitiesForPeriodUseCase {
-        override fun ResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> = responsibilities
+        override fun responsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> = responsibilities
     }
 
     private class CapturingEventsPublisher : EventsPublisher {
@@ -282,7 +282,7 @@ class GeneratePlanningScenarioTest {
     private class PeriodResponsibilitiesForPeriodUseCase(
         private val perPeriod: Map<Period, List<Responsibility>>
     ) : QueryResponsibilitiesForPeriodUseCase {
-        override fun ResponsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> =
+        override fun responsibilitiesFor(command: ResponsibilitiesForPeriodQuery): List<Responsibility> =
             requireNotNull(perPeriod[command.period]) { "No responsibilities configured for period=${command.period}" }
     }
 }

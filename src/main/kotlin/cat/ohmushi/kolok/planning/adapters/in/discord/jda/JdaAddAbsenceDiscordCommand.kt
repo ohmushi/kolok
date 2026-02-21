@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import org.springframework.stereotype.Component
 
 @Component
-class JdaAbsenceDiscordCommand(
+class JdaAddAbsenceDiscordCommand(
     val identityLinks: UserIdentityLinkRepository,
     private val recordAbsence: RecordAbsenceUseCase,
 ) : JdaCommandHandler {

@@ -29,7 +29,7 @@ class JdaResponsibilitiesForPeriodDiscordCommand(
 
         val period = Period.parseOrNullIfBlank(interaction.getOption("start")?.asString)
             ?: Period.firstAfter(LocalDate.now())
-        val responsibilities = queryResponsibilitiesForPeriodUseCase.ResponsibilitiesFor(
+        val responsibilities = queryResponsibilitiesForPeriodUseCase.responsibilitiesFor(
             ResponsibilitiesForPeriodQuery(period = period),
         )
 
