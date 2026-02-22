@@ -1,5 +1,10 @@
 package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
 
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.availabilities.JdaAddAbsenceDiscordCommand
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.availabilities.JdaCancelAbsenceDiscordCommand
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.responsabilities.JdaAddResponsibilityDiscordCommand
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.responsabilities.JdaRemoveResponsibilityDiscordCommand
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.responsabilities.JdaResponsibilitiesForPeriodDiscordCommand
 import cat.ohmushi.kolok.planning.adapters.infrastructure.JdaDiscordConnexion
 import dev.minn.jda.ktx.events.listener
 import kotlinx.coroutines.Dispatchers

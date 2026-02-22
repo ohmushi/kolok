@@ -1,5 +1,7 @@
-package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
+package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.availabilities
 
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaCommandHandler
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaPeriodAutoComplete
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.RecordAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.RecordAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository

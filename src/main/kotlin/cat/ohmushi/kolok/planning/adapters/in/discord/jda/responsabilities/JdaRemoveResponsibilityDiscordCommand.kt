@@ -1,5 +1,7 @@
-package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
+package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.responsabilities
 
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaCommandHandler
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaPeriodAutoComplete
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.RemoveResponsibilityCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.RemoveResponsibilityUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryResponsibilitiesForPeriodUseCase

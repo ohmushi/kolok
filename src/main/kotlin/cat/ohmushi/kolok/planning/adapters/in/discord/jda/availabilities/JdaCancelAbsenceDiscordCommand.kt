@@ -1,5 +1,6 @@
-package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda
+package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.availabilities
 
+import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaCommandHandler
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.CancelAbsenceCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.CancelAbsenceUseCase
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
