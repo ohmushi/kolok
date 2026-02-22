@@ -23,7 +23,7 @@ class JdaRemoveResponsibilityDiscordCommand(
     private val queryResponsibilitiesForPeriodUseCase: QueryResponsibilitiesForPeriodUseCase,
 ) : JdaCommandHandler {
 
-    override val commandName: String = "remove-responsibility"
+    override val commandName: String = "remove"
 
     private val logger = KotlinLogging.logger {}
 
@@ -34,7 +34,7 @@ class JdaRemoveResponsibilityDiscordCommand(
         )
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == "remove-responsibility") { "Invalid command for remove-responsibility" }
+        require(interaction.name == commandName) { "Invalid command for $commandName" }
 
         val message = run {
             val name = interaction.getOption("name")?.asString?.trim().orEmpty()
@@ -65,7 +65,7 @@ class JdaRemoveResponsibilityDiscordCommand(
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
         logger.info { interaction.focusedOption.value }
-        require(interaction.name == "remove-responsibility") { "Invalid command for remove-responsibility" }
+        require(interaction.name == commandName) { "Invalid command for $commandName" }
 
         when (interaction.focusedOption.name) {
             "start" -> interaction.replyChoices(JdaPeriodAutoComplete.nextPeriods()).queue()

@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component
 import java.util.function.Consumer
 
 @Component
-class JdaDiscordSlashCommandsRegistor(
+class JdaDiscordSlashCommandsRegistration(
     private val jdaDiscordConnexion: JdaDiscordConnexion,
     absenceDiscordCommand: JdaAddAbsenceDiscordCommand,
     cancelAbsenceDiscordCommand: JdaCancelAbsenceDiscordCommand,

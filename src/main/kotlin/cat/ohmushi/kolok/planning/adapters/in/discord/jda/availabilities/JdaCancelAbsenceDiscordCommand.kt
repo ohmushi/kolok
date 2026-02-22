@@ -23,7 +23,7 @@ class JdaCancelAbsenceDiscordCommand(
     private val cancelAbsence: CancelAbsenceUseCase,
     private val availabilityCalendarRepository: AvailabilityCalendarRepository,
 ) : JdaCommandHandler {
-    override val commandName: String = "cancel-absence"
+    override val commandName: String = "cancel"
 
     private val logger = KotlinLogging.logger {}
 
@@ -46,7 +46,7 @@ class JdaCancelAbsenceDiscordCommand(
 
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == "cancel-absence") { "Invalid command for CancelAbsenceCommand" }
+        require(interaction.name == "cancel-absence") { "Invalid command for $commandName" }
 
         val absent = interaction.getOption("absent")?.asUser ?: interaction.user
         val from = Period.parse(interaction.getOption("start")?.asString?.trim().orEmpty())
@@ -72,7 +72,7 @@ class JdaCancelAbsenceDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        require(interaction.name == "cancel-absence") { "Invalid command for CancelAbsenceCommand" }
+        require(interaction.name == commandName) { "Invalid command for $commandName" }
 
         val absent = interaction.getOption("absent")?.asUser?.id ?: interaction.user.id
 

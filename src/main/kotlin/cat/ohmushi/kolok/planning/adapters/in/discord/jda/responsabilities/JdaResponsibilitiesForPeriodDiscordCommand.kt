@@ -19,7 +19,7 @@ import java.time.LocalDate
 class JdaResponsibilitiesForPeriodDiscordCommand(
     private val queryResponsibilitiesForPeriodUseCase: QueryResponsibilitiesForPeriodUseCase,
 ) : JdaCommandHandler {
-    override val commandName: String = "responsibilities"
+    override val commandName: String = "list"
 
     private val logger = KotlinLogging.logger {}
 
@@ -29,7 +29,7 @@ class JdaResponsibilitiesForPeriodDiscordCommand(
         )
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == "responsibilities") { "Invalid command for responsibilities" }
+        require(interaction.name == commandName) { "Invalid command for $commandName" }
 
         val period = Period.parseOrNullIfBlank(interaction.getOption("start")?.asString)
             ?: Period.firstAfter(LocalDate.now())
@@ -53,7 +53,7 @@ class JdaResponsibilitiesForPeriodDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        require(interaction.name == "responsibilities") { "Invalid command for responsibilities" }
+        require(interaction.name == "responsibilities") { "Invalid command for $commandName" }
 
         if (interaction.focusedOption.name != "start") {
             interaction.replyChoices(emptyList()).queue()

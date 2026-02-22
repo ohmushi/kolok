@@ -18,8 +18,7 @@ import java.time.LocalDate
 class JdaAddResponsibilityDiscordCommand(
     private val addResponsibility: AddResponsibilityUseCase,
 ) : JdaCommandHandler {
-
-    override val commandName: String = "add-responsibility"
+    override val commandName: String = "add"
 
     private val logger = KotlinLogging.logger {}
 
@@ -30,7 +29,7 @@ class JdaAddResponsibilityDiscordCommand(
         )
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == "add-responsibility") { "Invalid command for add-responsibility" }
+        require(interaction.name == commandName) { "Invalid command for $commandName" }
 
         val message = run {
             val name = interaction.getOption("name")?.asString?.trim().orEmpty()
@@ -60,7 +59,7 @@ class JdaAddResponsibilityDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        require(interaction.name == "add-responsibility") { "Invalid command for add-responsibility" }
+        require(interaction.name == commandName) { "Invalid command for $commandName" }
 
         if (interaction.focusedOption.name != "start") {
             interaction.replyChoices(emptyList()).queue()
