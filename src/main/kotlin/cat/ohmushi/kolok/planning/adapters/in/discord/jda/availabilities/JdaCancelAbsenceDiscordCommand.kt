@@ -6,7 +6,6 @@ import cat.ohmushi.kolok.planning.application.ports.`in`.availabilities.CancelAb
 import cat.ohmushi.kolok.planning.application.ports.out.AvailabilityCalendarRepository
 import cat.ohmushi.kolok.planning.application.ports.out.UserIdentityLinkRepository
 import cat.ohmushi.kolok.planning.domain.planning.Period
-
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -44,10 +43,7 @@ class JdaCancelAbsenceDiscordCommand(
             OptionData(OptionType.USER, "absent", "Colocataire absent", false, false),
         )
 
-
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == "cancel-absence") { "Invalid command for $commandName" }
-
         val absent = interaction.getOption("absent")?.asUser ?: interaction.user
         val from = Period.parse(interaction.getOption("start")?.asString?.trim().orEmpty())
         val responsible = identityLinks.findResponsibleIdByUserId(userId = absent.id)
@@ -72,12 +68,10 @@ class JdaCancelAbsenceDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         val absent = interaction.getOption("absent")?.asUser?.id ?: interaction.user.id
 
         val responsible = identityLinks.findResponsibleIdByUserId(userId = absent)
-        if(responsible == null) {
+        if (responsible == null) {
             logger.info { "No Responsible found for user $absent" }
             interaction.replyChoices(emptyList()).queue()
             return

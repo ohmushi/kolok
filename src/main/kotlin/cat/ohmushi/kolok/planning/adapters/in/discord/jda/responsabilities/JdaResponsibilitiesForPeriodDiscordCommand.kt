@@ -29,8 +29,6 @@ class JdaResponsibilitiesForPeriodDiscordCommand(
         )
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         val period = Period.parseOrNullIfBlank(interaction.getOption("start")?.asString)
             ?: Period.firstAfter(LocalDate.now())
         val responsibilities = queryResponsibilitiesForPeriodUseCase.responsibilitiesFor(
@@ -53,8 +51,6 @@ class JdaResponsibilitiesForPeriodDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        require(interaction.name == "responsibilities") { "Invalid command for $commandName" }
-
         if (interaction.focusedOption.name != "start") {
             interaction.replyChoices(emptyList()).queue()
             return

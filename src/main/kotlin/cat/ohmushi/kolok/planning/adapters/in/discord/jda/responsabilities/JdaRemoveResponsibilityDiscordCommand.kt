@@ -2,9 +2,9 @@ package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.responsabilities
 
 import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaCommandHandler
 import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaPeriodAutoComplete
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryResponsibilitiesForPeriodUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.RemoveResponsibilityCommand
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.RemoveResponsibilityUseCase
-import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryResponsibilitiesForPeriodUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ResponsibilitiesForPeriodQuery
 import cat.ohmushi.kolok.planning.domain.planning.Period
 import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
@@ -34,8 +34,6 @@ class JdaRemoveResponsibilityDiscordCommand(
         )
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         val message = run {
             val name = interaction.getOption("name")?.asString?.trim().orEmpty()
             require(name.isNotBlank()) { "name ne doit pas être vide" }
@@ -64,9 +62,6 @@ class JdaRemoveResponsibilityDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        logger.info { interaction.focusedOption.value }
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         when (interaction.focusedOption.name) {
             "start" -> interaction.replyChoices(JdaPeriodAutoComplete.nextPeriods()).queue()
             "name" -> {

@@ -29,8 +29,6 @@ class JdaAddResponsibilityDiscordCommand(
         )
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         val message = run {
             val name = interaction.getOption("name")?.asString?.trim().orEmpty()
             require(name.isNotBlank()) { "name ne doit pas être vide" }
@@ -59,8 +57,6 @@ class JdaAddResponsibilityDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         if (interaction.focusedOption.name != "start") {
             interaction.replyChoices(emptyList()).queue()
             return

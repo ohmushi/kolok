@@ -19,7 +19,7 @@ class JdaAddAbsenceDiscordCommand(
     val identityLinks: UserIdentityLinkRepository,
     private val recordAbsence: RecordAbsenceUseCase,
 ) : JdaCommandHandler {
-    override val commandName: String = "list"
+    override val commandName: String = "add"
 
     private val logger = KotlinLogging.logger {}
 
@@ -31,8 +31,6 @@ class JdaAddAbsenceDiscordCommand(
         )
 
     override suspend fun handle(interaction: SlashCommandInteractionEvent) {
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         val absent = interaction.getOption("absent")?.asUser ?: interaction.user
         val message = run {
             val from = Period.parse(interaction.getOption("start")?.asString?.trim().orEmpty())
@@ -69,8 +67,6 @@ class JdaAddAbsenceDiscordCommand(
     }
 
     override suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        require(interaction.name == commandName) { "Invalid command for $commandName" }
-
         interaction.replyChoices(JdaPeriodAutoComplete.nextPeriods()).queue()
     }
 }

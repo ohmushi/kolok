@@ -9,7 +9,5 @@ interface JdaCommandHandler {
     val options: List<OptionData>
 
     suspend fun handle(interaction: SlashCommandInteractionEvent)
-    suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {
-        // default no-op
-    }
+    suspend fun handle(interaction: CommandAutoCompleteInteractionEvent) {}
 }
