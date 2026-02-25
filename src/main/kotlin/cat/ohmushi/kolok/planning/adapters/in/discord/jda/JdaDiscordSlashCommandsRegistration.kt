@@ -38,25 +38,25 @@ class JdaDiscordSlashCommandsRegistration(
     private data class JdaCommandGroupSpec(
         val name: String,
         val description: String,
-        val subcommands: Map<String, JdaCommandHandler>,
+        val subcommands: List<JdaCommandHandler>,
     )
 
     private val commandGroups: List<JdaCommandGroupSpec> = listOf(
         JdaCommandGroupSpec(
             name = "absences",
             description = "Gestion des absences",
-            subcommands = mapOf(
-                "add" to addAbsenceDiscordCommand,
-                "cancel" to cancelAbsenceDiscordCommand,
+            subcommands = listOf(
+                addAbsenceDiscordCommand,
+                cancelAbsenceDiscordCommand,
             ),
         ),
         JdaCommandGroupSpec(
             name = "responsibilities",
             description = "Gestion des responsabilités",
-            subcommands = mapOf(
-                "list" to responsibilitiesForPeriodDiscordCommand,
-                "add" to addResponsibilityDiscordCommand,
-                "remove" to removeResponsibilityDiscordCommand,
+            subcommands = listOf(
+                responsibilitiesForPeriodDiscordCommand,
+                addResponsibilityDiscordCommand,
+                removeResponsibilityDiscordCommand,
             ),
         ),
     )
@@ -86,9 +86,8 @@ class JdaDiscordSlashCommandsRegistration(
             commands.addCommands(
                 Commands.slash(group.name, group.description)
                     .addSubcommands(
-                        group.subcommands.map { (name, handler) ->
-                            SubcommandData(name, name)
-                                .addOptions(handler.options)
+                        group.subcommands.map { handler ->
+                            SubcommandData(handler.commandName, handler.commandName).addOptions(handler.options)
                         },
                     ),
             )

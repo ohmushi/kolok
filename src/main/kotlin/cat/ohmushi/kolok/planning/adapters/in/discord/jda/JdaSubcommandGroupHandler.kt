@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData
 
 class JdaSubcommandGroupHandler(
     override val commandName: String,
-    private val subcommands: Map<String, JdaCommandHandler>,
+    private val subcommands: List<JdaCommandHandler>,
 ) : JdaCommandHandler {
 
     override val options: List<OptionData>
@@ -18,7 +18,7 @@ class JdaSubcommandGroupHandler(
         val subcommandName = interaction.subcommandName
         require(!subcommandName.isNullOrBlank()) { "Missing subcommand for $commandName" }
 
-        val handler = requireNotNull(subcommands[subcommandName]) { "Unknown subcommand $commandName/$subcommandName" }
+        val handler = requireNotNull(subcommands.find { subcommand -> subcommand.commandName == subcommandName }) { "Unknown subcommand $commandName/$subcommandName" }
         handler.handle(interaction)
     }
 
@@ -31,7 +31,7 @@ class JdaSubcommandGroupHandler(
             return
         }
 
-        val handler = subcommands[subcommandName]
+        val handler = subcommands.find { subcommand -> subcommand.commandName == subcommandName }
         if (handler == null) {
             interaction.replyChoices(emptyList()).queue()
             return
