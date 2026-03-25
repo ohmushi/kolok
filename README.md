@@ -103,6 +103,7 @@ Persistance JSON actuelle (par défaut) :
 ## CI/CD
 - CI : `/.github/workflows/ci.yaml` exécute `./gradlew --no-daemon clean test bootJar`.
 - Publication Docker : `/.github/workflows/docker-publish.yaml` publie sur GHCR après réussite de la CI.
+- Utilsation de Dokploy pour le déploiement (config à venir).
 
 ## Structure du repo (racine)
 - `build.gradle.kts`, `settings.gradle.kts` : build Gradle
