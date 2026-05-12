@@ -48,6 +48,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.assertj:assertj-core:${versions.assertj}")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+    testImplementation("org.awaitility:awaitility:4.0.1")
 
     implementation("net.dv8tion:JDA:${versions.jda}") {
         exclude(group = "club.minnced", module = "opus-java")

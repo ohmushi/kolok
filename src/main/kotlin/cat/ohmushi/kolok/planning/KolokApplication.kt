@@ -7,8 +7,10 @@ import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
+import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication(exclude = [DataSourceAutoConfiguration::class])
+@EnableScheduling
 @ComponentScan(
     basePackages = ["cat.ohmushi.kolok.planning"],
     includeFilters = [ComponentScan.Filter(type = FilterType.ANNOTATION, classes = [ApplicationService::class])],
