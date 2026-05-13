@@ -119,4 +119,24 @@ class ResponsibilitiesCatalogTest {
 
         assertThat(catalog.snapshotVersions().map { it.from }).containsExactly(p1, p2, p3)
     }
+
+    @Test
+    fun `nextVersionAfter - retourne null si aucune version apres la periode donnee`() {
+        val catalog = ResponsibilitiesCatalog.create(initialFrom = p1, responsibilities = setOf(a))
+
+        assertThat(catalog.nextVersionAfter(p1)).isNull()
+        assertThat(catalog.nextVersionAfter(p2)).isNull()
+    }
+
+    @Test
+    fun `nextVersionAfter - retourne la periode de la prochaine version`() {
+        val catalog = ResponsibilitiesCatalog
+            .create(initialFrom = p1, responsibilities = setOf(a))
+            .defineFor(from = p2, responsibilities = setOf(a, b))
+            .defineFor(from = p3, responsibilities = setOf(c))
+
+        assertThat(catalog.nextVersionAfter(p1)).isEqualTo(p2)
+        assertThat(catalog.nextVersionAfter(p2)).isEqualTo(p3)
+        assertThat(catalog.nextVersionAfter(p3)).isNull()
+    }
 }

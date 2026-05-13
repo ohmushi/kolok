@@ -83,6 +83,20 @@ class ResponsibilitiesServiceTest {
         assertThat(repo.saveCalls).isZero()
     }
 
+    @Test
+    fun `nextVersionAfter - retourne la period de la prochaine version si elle existe`() {
+        val p3 = p2.next()
+        val catalog = ResponsibilitiesCatalog.create(initialFrom = p1, responsibilities = setOf(a))
+            .defineFor(from = p2, responsibilities = setOf(a, b))
+            .defineFor(from = p3, responsibilities = setOf(b))
+        val repo = InMemoryResponsibilitiesCatalogRepository(catalog)
+        val service = ResponsibilitiesService(repository = repo)
+
+        assertThat(service.nextVersionAfter(p1)).isEqualTo(p2)
+        assertThat(service.nextVersionAfter(p2)).isEqualTo(p3)
+        assertThat(service.nextVersionAfter(p3)).isNull()
+    }
+
     private class InMemoryResponsibilitiesCatalogRepository(
         private var catalog: ResponsibilitiesCatalog?,
     ) : ResponsibilitiesCatalogRepository {

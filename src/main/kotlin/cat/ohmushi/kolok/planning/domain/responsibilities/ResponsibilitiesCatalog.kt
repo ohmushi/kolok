@@ -82,4 +82,10 @@ class ResponsibilitiesCatalog private constructor(
             pendingEvents = pendingEvents + event
         )
     }
+
+    fun nextVersionAfter(period: Period): Period? =
+        versions
+            .filter { it.from.start.isAfter(period.start) }
+            .minByOrNull { it.from.start }
+            ?.from
 }

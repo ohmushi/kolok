@@ -2,12 +2,11 @@ package cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.responsabilities
 
 import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaCommandHandler
 import cat.ohmushi.kolok.planning.adapters.`in`.discord.jda.JdaPeriodAutoComplete
+import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryNextResponsibilitiesVersionUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.QueryResponsibilitiesForPeriodUseCase
 import cat.ohmushi.kolok.planning.application.ports.`in`.responsibilities.ResponsibilitiesForPeriodQuery
 import cat.ohmushi.kolok.planning.domain.planning.Period
-import cat.ohmushi.kolok.planning.domain.responsibilities.Responsibility
 import io.github.oshai.kotlinlogging.KotlinLogging
-import net.dv8tion.jda.api.entities.Message.MAX_CONTENT_LENGTH
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.OptionType
@@ -18,6 +17,7 @@ import java.time.LocalDate
 @Component
 class JdaResponsibilitiesForPeriodDiscordCommand(
     private val queryResponsibilitiesForPeriodUseCase: QueryResponsibilitiesForPeriodUseCase,
+    private val queryNextResponsibilitiesVersionUseCase: QueryNextResponsibilitiesVersionUseCase,
 ) : JdaCommandHandler {
     override val commandName: String = "list"
 
@@ -34,8 +34,9 @@ class JdaResponsibilitiesForPeriodDiscordCommand(
         val responsibilities = queryResponsibilitiesForPeriodUseCase.responsibilitiesFor(
             ResponsibilitiesForPeriodQuery(period = period),
         )
+        val nextPeriod = queryNextResponsibilitiesVersionUseCase.nextVersionAfter(period)
 
-        val message = ResponsibilitiesDiscordMessageFormatter.format(period, responsibilities)
+        val message = ResponsibilitiesDiscordMessageFormatter.format(period, responsibilities, nextPeriod)
         try {
             interaction.reply(message).setEphemeral(true).queue()
         } catch (e: IllegalArgumentException) {
@@ -60,29 +61,3 @@ class JdaResponsibilitiesForPeriodDiscordCommand(
     }
 }
 
-private object ResponsibilitiesDiscordMessageFormatter {
-
-    fun format(period: Period, responsibilities: List<Responsibility>): String {
-        if (responsibilities.isEmpty()) {
-            return "Aucune responsabilité active pour la période du ${period.start}."
-        }
-
-        val header = "Responsabilités pour la période du ${period.start} :\n"
-        val body = buildString {
-            responsibilities.forEach { responsibility ->
-                append("- ")
-                append(responsibility.name)
-                append('\n')
-            }
-        }
-
-        val full = (header + body).trimEnd()
-        if (full.length <= MAX_CONTENT_LENGTH) {
-            return full
-        }
-
-        val suffix = "\n(liste tronquée)"
-        val maxLen = (MAX_CONTENT_LENGTH - suffix.length).coerceAtLeast(0)
-        return (full.take(maxLen).trimEnd() + suffix)
-    }
-}
